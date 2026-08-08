@@ -1,0 +1,95 @@
+"use client";
+
+import { Menu, X } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+
+// Навигация — статичный список страниц (Architecture.md, раздел 2). Без обращения
+// к lib/data — components/layout только вёрстка (Project_Structure.md).
+const NAV_LINKS = [
+  { label: "Каталог", href: "/catalog" },
+  { label: "Производители", href: "/manufacturers" },
+  { label: "Услуги", href: "/services" },
+  { label: "О компании", href: "/company" },
+  { label: "Контакты", href: "/contacts" },
+];
+
+// Стили CTA-ссылки повторяют вариант Button "secondary" (не сам компонент Button —
+// <button> внутри <a> невалиден по HTML, а "Оставить заявку" ведёт на /request).
+const REQUEST_CTA_CLASSNAME =
+  "inline-flex items-center justify-center rounded-2xl bg-secondary px-5 py-2.5 text-base font-semibold text-primary transition-colors duration-200 ease-out hover:bg-white";
+
+export function Header() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  return (
+    // Фиксированная шапка на акцентном цвете brand-800 (Frontend.md, раздел 4.1:
+    // "Акцент основной — кнопки, ссылки, фиксированная шапка").
+    <header className="sticky top-0 z-40 bg-brand-800">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 md:px-6 lg:px-8">
+        <Link
+          href="/"
+          onClick={() => setIsMenuOpen(false)}
+          className="text-lg font-semibold text-white transition-colors duration-200 ease-out hover:text-white/80 md:text-xl"
+        >
+          B2B-магазин промышленного оборудования
+        </Link>
+
+        <nav aria-label="Основная навигация" className="hidden md:flex md:items-center md:gap-6">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-white/90 transition-colors duration-200 ease-out hover:text-white"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="flex items-center gap-3">
+          <Link href="/request" className="hidden sm:inline-flex">
+            <span className={REQUEST_CTA_CLASSNAME}>Оставить заявку</span>
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen((open) => !open)}
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-nav"
+            aria-label={isMenuOpen ? "Закрыть меню" : "Открыть меню"}
+            className="inline-flex items-center justify-center rounded-xl p-2 text-white transition-colors duration-200 ease-out hover:bg-white/10 md:hidden"
+          >
+            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Мобильное меню — сворачивается в гамбургер, переключение через max-height,
+          только Tailwind transition (Frontend.md, раздел 4.3.3), без библиотек. */}
+      <nav
+        id="mobile-nav"
+        aria-label="Мобильная навигация"
+        className={`overflow-hidden transition-[max-height] duration-200 ease-out motion-reduce:transition-none md:hidden ${
+          isMenuOpen ? "max-h-96" : "max-h-0"
+        }`}
+      >
+        <div className="flex flex-col gap-1 px-4 pb-4 md:px-6">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setIsMenuOpen(false)}
+              className="rounded-xl px-3 py-2 text-white/90 transition-colors duration-200 ease-out hover:bg-white/10 hover:text-white"
+            >
+              {link.label}
+            </Link>
+          ))}
+          <Link href="/request" onClick={() => setIsMenuOpen(false)} className="mt-2 sm:hidden">
+            <span className={`${REQUEST_CTA_CLASSNAME} w-full`}>Оставить заявку</span>
+          </Link>
+        </div>
+      </nav>
+    </header>
+  );
+}

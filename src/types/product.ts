@@ -19,15 +19,15 @@ export interface ProductDocument {
  * 'unavailable' → бейдж "Нет в поставке" (поставщик снял с производства/поставки)
  * См. Product.md, п.2.2 — намеренно переопределённый смысл поля.
  */
-export type ProductAvailability = 'available' | 'unavailable';
+export type ProductAvailability = "available" | "unavailable";
 
 /**
  * Текст бейджа на карточке товара для каждого статуса — единое место,
  * чтобы чат "Фронт" не заводил свою копию строк (см. Product.md, п.2.2).
  */
 export const PRODUCT_AVAILABILITY_LABELS: Record<ProductAvailability, string> = {
-  available: 'Под заказ',
-  unavailable: 'Нет в поставке',
+  available: "Под заказ",
+  unavailable: "Нет в поставке",
 };
 
 export interface Product {

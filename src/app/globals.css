@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+/* Акцентные цвета из Frontend.md, раздел 4.1 — обычные Tailwind-цвета (custom),
+   используются во всех цветовых утилитах (bg-brand-800, text-brand-800, border-brand-800…). */
+@theme {
+  --color-brand-800: #1e3a8a;
+  --color-brand-600: #2563eb;
+}
+
+/* --font-sans ссылается на CSS-переменную, которую next/font подставляет во время выполнения
+   (см. src/app/layout.tsx), поэтому объявляется через "@theme inline", а не через "@theme". */
+@theme inline {
+  --font-sans: var(--font-manrope);
+}
+
+/*
+ * bg-secondary, text-primary, text-secondary — токены из Frontend.md, раздел 4.1.
+ * Не заведены через @theme (--color-...), потому что в брифе "вторичный фон" (#F8FAFC) и
+ * "текст вторичный" (#6B7280) — разные цвета с общим словом "вторичный", а у Tailwind один
+ * общий цветовой namespace на все цветовые утилиты сразу (background, text, border), и общее
+ * имя "secondary" склеило бы их в один цвет. Поэтому это независимые друг от друга CSS-утилиты.
+ */
+@layer utilities {
+  .bg-secondary {
+    background-color: #f8fafc;
+  }
+
+  .text-primary {
+    color: #111827;
+  }
+
+  .text-secondary {
+    color: #6b7280;
+  }
+}

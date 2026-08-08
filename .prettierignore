@@ -1,0 +1,10 @@
+node_modules
+.next
+out
+build
+public
+package-lock.json
+
+# Документация и служебные файлы — не код, форматируются отдельно, не Prettier
+*.md
+.claude
