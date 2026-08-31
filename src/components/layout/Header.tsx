@@ -6,17 +6,18 @@ import { useState } from "react";
 
 // Навигация — статичный список страниц (Architecture.md, раздел 2). Без обращения
 // к lib/data — components/layout только вёрстка (Project_Structure.md).
+// «Производители» отдельным роутом нет — это полоса логотипов на главной (Architecture.md, 2).
 const NAV_LINKS = [
   { label: "Каталог", href: "/catalog" },
-  { label: "Производители", href: "/manufacturers" },
   { label: "Услуги", href: "/services" },
   { label: "О компании", href: "/company" },
   { label: "Контакты", href: "/contacts" },
 ];
 
 // Стили CTA-ссылки повторяют вариант Button "secondary" (не сам компонент Button —
-// <button> внутри <a> невалиден по HTML, а "Оставить заявку" ведёт на /request).
-const REQUEST_CTA_CLASSNAME =
+// <button> внутри <a> невалиден по HTML). Формы заявки на сайте нет (юридическое решение),
+// CTA ведёт на /contacts — там телефон/email менеджера (Architecture.md, раздел 2).
+const CONTACT_CTA_CLASSNAME =
   "inline-flex items-center justify-center rounded-2xl bg-secondary px-5 py-2.5 text-base font-semibold text-primary transition-colors duration-200 ease-out hover:bg-white";
 
 export function Header() {
@@ -48,8 +49,8 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link href="/request" className="hidden sm:inline-flex">
-            <span className={REQUEST_CTA_CLASSNAME}>Оставить заявку</span>
+          <Link href="/contacts" className="hidden sm:inline-flex">
+            <span className={CONTACT_CTA_CLASSNAME}>Связаться с менеджером</span>
           </Link>
 
           <button
@@ -85,8 +86,8 @@ export function Header() {
               {link.label}
             </Link>
           ))}
-          <Link href="/request" onClick={() => setIsMenuOpen(false)} className="mt-2 sm:hidden">
-            <span className={`${REQUEST_CTA_CLASSNAME} w-full`}>Оставить заявку</span>
+          <Link href="/contacts" onClick={() => setIsMenuOpen(false)} className="mt-2 sm:hidden">
+            <span className={`${CONTACT_CTA_CLASSNAME} w-full`}>Связаться с менеджером</span>
           </Link>
         </div>
       </nav>

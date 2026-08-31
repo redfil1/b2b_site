@@ -6,6 +6,6 @@ export interface Manufacturer {
   slug: string;
   /** Отображаемое название производителя. */
   name: string;
-  /** Путь к логотипу — /manufacturers зафиксирован как "список с логотипами". */
+  /** Путь к логотипу — для полосы логотипов производителей на главной (Architecture.md, 1.1). */
   logo?: string;
 }

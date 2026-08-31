@@ -61,12 +61,6 @@ export interface Product {
   deliveryTime: string;
   availability: ProductAvailability;
   images?: string[];
-  /**
-   * Флаг "популярный товар" для блока на главной/в каталоге.
-   * Расставляется вручную в lib/data/products.ts, не вычисляется по метрикам —
-   * автоматический расчёт "популярности" не нужен на этом этапе (нет данных для него).
-   */
-  featured?: boolean;
 }
 
 /**

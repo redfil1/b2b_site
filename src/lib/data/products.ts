@@ -38,7 +38,6 @@ const productDrafts: ProductDraft[] = [
     deliveryTime: "45–60 дней",
     availability: "available",
     images: ["/images/products/multi-gas-analyzer-mga-500-1.jpg"],
-    featured: true,
     missingData: [],
   },
   {
@@ -62,7 +61,6 @@ const productDrafts: ProductDraft[] = [
     deliveryTime: "уточняется по заявке",
     availability: "available",
     images: ["/images/products/pressure-sensor-pd-200-1.jpg"],
-    featured: false,
     missingData: [],
   },
   {
@@ -90,7 +88,6 @@ const productDrafts: ProductDraft[] = [
     deliveryTime: "30–40 дней",
     availability: "unavailable",
     images: ["/images/products/laboratory-centrifuge-lc-800-1.jpg"],
-    featured: true,
     missingData: [],
   },
   {
@@ -112,7 +109,6 @@ const productDrafts: ProductDraft[] = [
     deliveryTime: "60–90 дней",
     availability: "unavailable",
     images: ["/images/products/mini-wheel-loader-zc-30-1.jpg"],
-    featured: false,
     missingData: [],
   },
   {
@@ -134,7 +130,6 @@ const productDrafts: ProductDraft[] = [
     deliveryTime: "уточняется по заявке",
     availability: "available",
     images: ["/images/products/single-gas-detector-sgd-100-1.jpg"],
-    featured: false,
     missingData: [],
   },
   {
@@ -162,7 +157,6 @@ const productDrafts: ProductDraft[] = [
     deliveryTime: "45–60 дней",
     availability: "available",
     images: ["/images/products/ultrasonic-flow-meter-uf-400-1.jpg"],
-    featured: true,
     missingData: [],
   },
 ];

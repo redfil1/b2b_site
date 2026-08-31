@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumbs, type BreadcrumbItem } from "@/components/layout/Breadcrumbs";
 import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
 import { ProductGallery } from "@/components/features/product/ProductGallery";
 import { ProductSpecsTable } from "@/components/features/product/ProductSpecsTable";
 import { ProductTabs } from "@/components/features/product/ProductTabs";
@@ -93,15 +93,15 @@ export default async function ProductPage({ params }: PageProps<"/catalog/[categ
             <dd className="text-primary">{product.deliveryTime}</dd>
           </dl>
 
-          {/* Пока просто кнопки — реальная отправка заявки (POST /api/request) —
-              будущий шаг, зона API.md/Commercial-offer.md. */}
+          {/* Формы заявки на сайте нет (юридическое решение, см. docs/architecture.md).
+              CTA — ссылка на /contacts, где телефон/email менеджера; сбора данных нет. */}
           <div className="mt-2 flex flex-wrap gap-3">
-            <Button type="button" variant="primary">
-              Получить КП
-            </Button>
-            <Button type="button" variant="outline">
-              Запросить консультацию
-            </Button>
+            <Link
+              href="/contacts"
+              className="inline-flex items-center justify-center rounded-2xl bg-brand-800 px-5 py-2.5 text-base font-semibold text-white transition-colors duration-200 ease-out hover:bg-brand-600"
+            >
+              Связаться с менеджером
+            </Link>
             {hasDocuments && (
               <a
                 href={documents[0].url}
