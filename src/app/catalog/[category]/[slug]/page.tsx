@@ -4,14 +4,25 @@ import { notFound } from "next/navigation";
 import { Breadcrumbs, type BreadcrumbItem } from "@/components/layout/Breadcrumbs";
 import { Badge } from "@/components/ui/Badge";
 import { Container } from "@/components/ui/Container";
+import { JsonLd } from "@/components/ui/JsonLd";
 import { ProductGallery } from "@/components/features/product/ProductGallery";
 import { ProductSpecsTable } from "@/components/features/product/ProductSpecsTable";
 import { ProductTabs } from "@/components/features/product/ProductTabs";
+import { siteConfig } from "@/config/site";
 import { PRODUCT_AVAILABILITY_BADGE_VARIANT } from "@/lib/constants/product";
 import { getCategory } from "@/lib/data/categories";
 import { getManufacturer } from "@/lib/data/manufacturers";
-import { getProduct } from "@/lib/data/products";
+import { getProduct, getProducts } from "@/lib/data/products";
 import { PRODUCT_AVAILABILITY_LABELS } from "@/types/product";
+
+// Полный список товаров из локальных данных — все карточки пререндерятся в
+// статику (SEO.md, раздел 5). Неизвестный путь уходит в notFound() ниже.
+export function generateStaticParams() {
+  return getProducts().map((product) => ({
+    category: product.category,
+    slug: product.slug,
+  }));
+}
 
 export async function generateMetadata({
   params,
@@ -26,6 +37,8 @@ export async function generateMetadata({
   return {
     title: `${product.title} — Каталог`,
     description: product.description,
+    // Относительный путь → metadataBase делает его абсолютным каноническим URL.
+    alternates: { canonical: `/catalog/${product.category}/${product.slug}` },
   };
 }
 
@@ -48,8 +61,68 @@ export default async function ProductPage({ params }: PageProps<"/catalog/[categ
   }
   breadcrumbItems.push({ label: product.title });
 
+  const productUrl = new URL(
+    `/catalog/${product.category}/${product.slug}`,
+    siteConfig.url,
+  ).toString();
+
+  // Product-разметка (SEO.md, раздел 8.1): только поля из типа Product, без
+  // выдуманных значений. Блок offers/цены не добавляем — цены на сайте нет;
+  // складской статус в разметку тоже не выносим (Product.md, 2.2).
+  const productLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.title,
+    description: product.description,
+    ...(product.images && product.images.length > 0
+      ? { image: product.images.map((image) => new URL(image, siteConfig.url).toString()) }
+      : {}),
+    ...(product.sku ? { sku: product.sku } : {}),
+    ...(manufacturer ? { brand: { "@type": "Brand", name: manufacturer.name } } : {}),
+    ...(category ? { category: category.name } : {}),
+  };
+
+  // BreadcrumbList повторяет видимые хлебные крошки (SEO.md, раздел 8.2):
+  // Главная → Каталог → Категория → Товар; item каждого уровня — абсолютный URL.
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Главная",
+        item: new URL("/", siteConfig.url).toString(),
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Каталог",
+        item: new URL("/catalog", siteConfig.url).toString(),
+      },
+      ...(category
+        ? [
+            {
+              "@type": "ListItem",
+              position: 3,
+              name: category.name,
+              item: new URL(`/catalog/${category.slug}`, siteConfig.url).toString(),
+            },
+          ]
+        : []),
+      {
+        "@type": "ListItem",
+        position: category ? 4 : 3,
+        name: product.title,
+        item: productUrl,
+      },
+    ],
+  };
+
   return (
     <Container as="main" className="py-10">
+      <JsonLd data={productLd} />
+      <JsonLd data={breadcrumbLd} />
       <Breadcrumbs items={breadcrumbItems} />
 
       {/* Раскладка карточки товара — Frontend.md, раздел 4.3.2: lg:grid-cols-[3fr_2fr],

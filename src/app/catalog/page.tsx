@@ -33,7 +33,7 @@ export default function CatalogPage() {
               <div className="relative aspect-square w-full bg-secondary">
                 <Image
                   src={category.image}
-                  alt=""
+                  alt={category.name}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                   className="object-cover"

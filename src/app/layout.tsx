@@ -15,9 +15,26 @@ const manrope = Manrope({
 // Метаданные по умолчанию — из src/config/site.ts (единый источник констант сайта,
 // Architecture.md, 2.2). Заголовок/описание конкретных страниц задаются в их
 // собственных generateMetadata / export const metadata.
+//
+// metadataBase (SEO.md, раздел 2) делает абсолютными все относительные URL в
+// метаданных ниже по дереву: OG-картинку из app/opengraph-image.tsx и
+// alternates.canonical на страницах каталога. Значение — из config/site.ts.
 export const metadata: Metadata = {
+  metadataBase: new URL(siteConfig.url),
   title: siteConfig.name,
   description: siteConfig.description,
+  openGraph: {
+    type: "website",
+    locale: "ru_RU",
+    siteName: siteConfig.name,
+    title: siteConfig.name,
+    description: siteConfig.description,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.name,
+    description: siteConfig.description,
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
