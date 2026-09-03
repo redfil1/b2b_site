@@ -1,7 +1,7 @@
 # Project Structure.md — B2B-магазин спецтехники
 
 Статус: рабочая версия.
-Связанные документы: `Architecture.md`, `Tech Stack.md`, `Coding Rules.md`.
+Связанные документы: `Architecture.md`, `Tech Stack.md`, `Coding Rules.md`, `SEO.md`.
 
 > **Изменение от 2026-08-31 (юридическое решение, 152-ФЗ).** Форма заявки и
 > автоматизация «заявка → КП» убраны. Из структуры ниже удалены: роуты
@@ -9,6 +9,13 @@
 > `app/manufacturers/`, папка `lib/pdf/`, папка `components/features/request/`,
 > тип `types/request.ts`. Добавлена папка `components/features/home/` (слайдер
 > и полоса логотипов производителей на главной, см. `frontend.md`).
+
+> **Изменение от 2026-09-03 (внешний аудит).** В структуру добавлены: `app/sitemap.ts`,
+> `app/robots.ts`, `app/opengraph-image.tsx` (SEO-пакет, см. `SEO.md`) и примитив
+> `components/ui/Container`. Container относится к `components/ui/` (ранее в `frontend.md`
+> упоминался в двух местах — зафиксировано `ui/`). `app/not-found.tsx`, `app/error.tsx`,
+> `app/search/` и `config/site.ts` уже были в дереве — их назначение уточнено в
+> `Architecture.md` (разделы 2.1–2.2) и `SEO.md`.
 
 ---
 
@@ -33,12 +40,15 @@ src/
 │   ├── contacts/page.tsx
 │   ├── delivery/page.tsx
 │   ├── legal/[doc]/page.tsx
-│   ├── not-found.tsx
-│   └── error.tsx
+│   ├── sitemap.ts                 — карта сайта, генерируется из каталога (см. SEO.md)
+│   ├── robots.ts                  — robots.txt, ссылка на sitemap (см. SEO.md)
+│   ├── opengraph-image.tsx        — OG-картинка сайта по умолчанию (см. SEO.md)
+│   ├── not-found.tsx              — глобальная страница 404 (Architecture.md, 2.1)
+│   └── error.tsx                  — глобальный error boundary, "use client" (Architecture.md, 2.1)
 │
 ├── components/
-│   ├── ui/                        — кнопки, инпуты, карточки-примитивы (без бизнес-логики)
-│   ├── layout/                    — Header, Footer, Breadcrumbs, Container
+│   ├── ui/                        — кнопки, инпуты, карточки-примитивы, Container (без бизнес-логики)
+│   ├── layout/                    — Header (вкл. инлайн-поиск), Footer, Breadcrumbs
 │   └── features/                  — сборные блоки конкретных разделов
 │       ├── catalog/
 │       ├── product/                — компоненты карточки товара
@@ -61,12 +71,13 @@ src/
 │
 ├── hooks/
 ├── config/
-│   └── site.ts                     — название, meta по умолчанию, соцсети, контакты
+│   └── site.ts                     — название, meta по умолчанию (вкл. базовый URL для metadataBase, см. SEO.md), соцсети, контакты
 │
 public/
 ```
 
 ## Правила
 - **`components/ui` не знает о данных** — только пропсы и вёрстка. Всё, что дёргает `lib/data`, живёт в `components/features/*` или в `page.tsx`.
+- **`Container` — это `components/ui/Container`** (примитив вёрстки, без данных), не `layout/`. Зафиксировано после внешнего аудита 2026-09-03 (см. `Architecture.md`, 2.2).
 - **Один тип — одно место**: типы `Product`, `Category` объявляются один раз в `types/` и импортируются везде (чаты Карточки/Фронт не заводят дублирующие интерфейсы). `types/request.ts` относился к отменённой форме заявки — не использовать.
 - Алиас путей `@/*` → `src/*` в `tsconfig.json`, чтобы не было `../../../../`.
