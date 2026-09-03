@@ -1,14 +1,15 @@
 import Link from "next/link";
-import { Card } from "@/components/ui/Card";
 import { HeroSlider } from "@/components/features/home/HeroSlider";
 import { ManufacturerLogos } from "@/components/features/home/ManufacturerLogos";
+import { Card } from "@/components/ui/Card";
+import { Container } from "@/components/ui/Container";
 import { getCategories } from "@/lib/data/categories";
 
 export default function Home() {
   const categories = getCategories();
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-10 md:px-6 lg:px-8">
+    <Container as="main" className="py-10">
       {/* Слайдер главной — Frontend.md, раздел 4.3.4 (тестовые слайды-заглушки). */}
       <HeroSlider />
 
@@ -48,6 +49,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-    </main>
+    </Container>
   );
 }

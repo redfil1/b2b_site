@@ -3,6 +3,7 @@
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { siteConfig } from "@/config/site";
 
 // Навигация — статичный список страниц (Architecture.md, раздел 2). Без обращения
 // к lib/data — components/layout только вёрстка (Project_Structure.md).
@@ -33,7 +34,7 @@ export function Header() {
           onClick={() => setIsMenuOpen(false)}
           className="text-lg font-semibold text-white transition-colors duration-200 ease-out hover:text-white/80 md:text-xl"
         >
-          B2B-магазин промышленного оборудования
+          {siteConfig.name}
         </Link>
 
         <nav aria-label="Основная навигация" className="hidden md:flex md:items-center md:gap-6">

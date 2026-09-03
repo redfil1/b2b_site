@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { ProductGrid } from "@/components/features/catalog/ProductGrid";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { Container } from "@/components/ui/Container";
 import { getCategory } from "@/lib/data/categories";
 import { getProductsByCategory } from "@/lib/data/products";
 
@@ -32,7 +33,7 @@ export default async function CategoryPage({ params }: PageProps<"/catalog/[cate
   const products = getProductsByCategory(category.slug);
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-10 md:px-6 lg:px-8">
+    <Container as="main" className="py-10">
       <Breadcrumbs items={[{ label: "Каталог", href: "/catalog" }, { label: category.name }]} />
       <h1 className="mt-4 text-4xl font-semibold text-primary md:text-5xl">{category.name}</h1>
       {category.description && (
@@ -48,6 +49,6 @@ export default async function CategoryPage({ params }: PageProps<"/catalog/[cate
       ) : (
         <p className="mt-8 text-secondary">Товары в этой категории появятся позже.</p>
       )}
-    </main>
+    </Container>
   );
 }

@@ -1,31 +1,33 @@
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { Container } from "@/components/ui/Container";
 import { DraftNotice } from "@/components/ui/DraftNotice";
+import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
-  title: "Контакты — B2B-магазин промышленного оборудования",
+  title: `Контакты — ${siteConfig.name}`,
   description: "Контактные данные для связи с менеджером.",
 };
 
 export default function ContactsPage() {
   return (
-    <main className="mx-auto max-w-7xl px-4 py-10 md:px-6 lg:px-8">
+    <Container as="main" className="py-10">
       <Breadcrumbs items={[{ label: "Контакты" }]} />
       <h1 className="mt-4 text-4xl font-semibold text-primary md:text-5xl">Контакты</h1>
 
       <div className="mt-6 max-w-xl">
         <DraftNotice />
 
-        {/* Заглушка — реальные реквизиты компании ещё не переданы. Значения совпадают
-            с временными данными в components/layout/Footer.tsx, чтобы не расходились. */}
+        {/* Контакты — из src/config/site.ts (пока временные заглушки), один источник
+            с Header/Footer, чтобы значения не расходились. */}
         <dl className="mt-6 flex flex-col gap-3 text-primary">
           <div>
             <dt className="text-sm text-secondary">Телефон</dt>
-            <dd>+7 (000) 000-00-00 (временная заглушка)</dd>
+            <dd>{siteConfig.contacts.phone}</dd>
           </div>
           <div>
             <dt className="text-sm text-secondary">Email</dt>
-            <dd>info@example.com (временная заглушка)</dd>
+            <dd>{siteConfig.contacts.email}</dd>
           </div>
           <div>
             <dt className="text-sm text-secondary">Юридический адрес и реквизиты</dt>
@@ -33,6 +35,6 @@ export default function ContactsPage() {
           </div>
         </dl>
       </div>
-    </main>
+    </Container>
   );
 }

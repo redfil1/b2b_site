@@ -1,19 +1,19 @@
 import Link from "next/link";
+import { Container } from "@/components/ui/Container";
+import { siteConfig } from "@/config/site";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
     <footer className="mt-16 border-t border-gray-200 bg-secondary">
-      <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 py-10 md:flex-row md:items-start md:justify-between md:px-6 lg:px-8">
+      <Container className="flex flex-col gap-8 py-10 md:flex-row md:items-start md:justify-between">
         <div className="flex flex-col gap-2">
-          <span className="text-lg font-semibold text-primary">
-            B2B-магазин промышленного оборудования
-          </span>
-          {/* Временная заглушка — реальные реквизиты компании ещё не переданы. */}
+          <span className="text-lg font-semibold text-primary">{siteConfig.name}</span>
+          {/* Контакты — из src/config/site.ts (пока временные заглушки). */}
           <div className="text-secondary">
-            <p>Телефон: +7 (000) 000-00-00 (временная заглушка)</p>
-            <p>Email: info@example.com (временная заглушка)</p>
+            <p>Телефон: {siteConfig.contacts.phone}</p>
+            <p>Email: {siteConfig.contacts.email}</p>
           </div>
         </div>
 
@@ -33,12 +33,12 @@ export function Footer() {
             Политика конфиденциальности
           </Link>
         </nav>
-      </div>
+      </Container>
 
       <div className="border-t border-gray-200">
-        <p className="mx-auto max-w-7xl px-4 py-4 text-sm text-secondary md:px-6 lg:px-8">
-          © {currentYear} B2B-магазин промышленного оборудования. Все права защищены.
-        </p>
+        <Container as="p" className="py-4 text-sm text-secondary">
+          © {currentYear} {siteConfig.name}. Все права защищены.
+        </Container>
       </div>
     </footer>
   );

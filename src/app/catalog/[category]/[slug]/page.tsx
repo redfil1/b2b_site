@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumbs, type BreadcrumbItem } from "@/components/layout/Breadcrumbs";
 import { Badge } from "@/components/ui/Badge";
+import { Container } from "@/components/ui/Container";
 import { ProductGallery } from "@/components/features/product/ProductGallery";
 import { ProductSpecsTable } from "@/components/features/product/ProductSpecsTable";
 import { ProductTabs } from "@/components/features/product/ProductTabs";
@@ -48,7 +49,7 @@ export default async function ProductPage({ params }: PageProps<"/catalog/[categ
   breadcrumbItems.push({ label: product.title });
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-10 md:px-6 lg:px-8">
+    <Container as="main" className="py-10">
       <Breadcrumbs items={breadcrumbItems} />
 
       {/* Раскладка карточки товара — Frontend.md, раздел 4.3.2: lg:grid-cols-[3fr_2fr],
@@ -172,6 +173,6 @@ export default async function ProductPage({ params }: PageProps<"/catalog/[categ
           ]}
         />
       </div>
-    </main>
+    </Container>
   );
 }

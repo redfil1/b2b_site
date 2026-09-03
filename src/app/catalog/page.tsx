@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { Container } from "@/components/ui/Container";
 import { getCategories } from "@/lib/data/categories";
 
 export const metadata: Metadata = {
@@ -13,7 +14,7 @@ export default function CatalogPage() {
   const categories = getCategories();
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-10 md:px-6 lg:px-8">
+    <Container as="main" className="py-10">
       <Breadcrumbs items={[{ label: "Каталог" }]} />
       <h1 className="mt-4 text-4xl font-semibold text-primary md:text-5xl">Каталог</h1>
 
@@ -46,6 +47,6 @@ export default function CatalogPage() {
           </Link>
         ))}
       </div>
-    </main>
+    </Container>
   );
 }

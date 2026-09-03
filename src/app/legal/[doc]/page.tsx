@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { Container } from "@/components/ui/Container";
 import { DraftNotice } from "@/components/ui/DraftNotice";
 
 // Список конкретных правовых документов не зафиксирован архитектурой (Project_Structure.md
@@ -28,7 +29,7 @@ export default async function LegalDocPage({ params }: PageProps<"/legal/[doc]">
   const title = getLegalDocTitle(doc);
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-10 md:px-6 lg:px-8">
+    <Container as="main" className="py-10">
       <Breadcrumbs items={[{ label: title }]} />
       <h1 className="mt-4 text-4xl font-semibold text-primary md:text-5xl">{title}</h1>
 
@@ -38,6 +39,6 @@ export default async function LegalDocPage({ params }: PageProps<"/legal/[doc]">
           Текст документа «{title}» пока не подготовлен и будет добавлен позже.
         </p>
       </div>
-    </main>
+    </Container>
   );
 }
