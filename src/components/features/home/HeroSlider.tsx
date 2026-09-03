@@ -47,11 +47,14 @@ export function HeroSlider() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return;
     }
+    // Зависимость от current: интервал пересоздаётся при каждой смене слайда — как
+    // автоматической, так и ручной (goTo из стрелки/точки). Без этого остаток текущего
+    // тика мог сменить слайд почти сразу после ручного клика.
     const timer = window.setInterval(() => {
       setCurrent((index) => (index + 1) % SLIDES.length);
     }, AUTOPLAY_MS);
     return () => window.clearInterval(timer);
-  }, []);
+  }, [current]);
 
   return (
     <section
@@ -79,7 +82,9 @@ export function HeroSlider() {
             {/* Затемнение под текст — лёгкое, не «тяжёлый тёмный фон» (Frontend.md, 4.1). */}
             <div className="absolute inset-0 bg-brand-800/30" />
             <div className="absolute inset-0 flex flex-col justify-end gap-2 p-6 text-white md:p-10">
-              <h2 className="max-w-2xl text-2xl font-semibold md:text-4xl">{slide.title}</h2>
+              {/* Не заголовок: это баннерная подпись слайдера, а не структура документа.
+                  h1 страницы идёт ниже по DOM — держим слайдер вне иерархии заголовков. */}
+              <p className="max-w-2xl text-2xl font-semibold md:text-4xl">{slide.title}</p>
               <p className="max-w-xl text-sm text-white/90 md:text-base">{slide.subtitle}</p>
             </div>
           </div>

@@ -67,10 +67,15 @@ export function Header() {
       </div>
 
       {/* Мобильное меню — сворачивается в гамбургер, переключение через max-height,
-          только Tailwind transition (Frontend.md, раздел 4.3.3), без библиотек. */}
+          только Tailwind transition (Frontend.md, раздел 4.3.3), без библиотек.
+          В закрытом состоянии max-h-0 + overflow-hidden лишь визуально прячут меню,
+          поэтому дополнительно снимаем его из дерева доступности и убираем из
+          таба (aria-hidden + inert) — фокус не должен попадать в невидимые ссылки. */}
       <nav
         id="mobile-nav"
         aria-label="Мобильная навигация"
+        aria-hidden={!isMenuOpen}
+        inert={!isMenuOpen}
         className={`overflow-hidden transition-[max-height] duration-200 ease-out motion-reduce:transition-none md:hidden ${
           isMenuOpen ? "max-h-96" : "max-h-0"
         }`}

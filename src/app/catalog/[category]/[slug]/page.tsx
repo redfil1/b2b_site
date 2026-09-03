@@ -54,7 +54,7 @@ export default async function ProductPage({ params }: PageProps<"/catalog/[categ
       {/* Раскладка карточки товара — Frontend.md, раздел 4.3.2: lg:grid-cols-[3fr_2fr],
           галерея слева, информационный блок справа; на мобильном — одна колонка. */}
       <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-[3fr_2fr]">
-        <ProductGallery title={product.title} />
+        <ProductGallery title={product.title} images={product.images} />
 
         <div className="flex flex-col gap-4">
           <Badge
@@ -102,16 +102,20 @@ export default async function ProductPage({ params }: PageProps<"/catalog/[categ
             >
               Связаться с менеджером
             </Link>
-            {hasDocuments && (
+            {/* Отдельная ссылка на каждый документ: при нескольких файлах одна кнопка
+                на documents[0] прятала бы остальные. Для единственного документа —
+                прежняя подпись «Скачать PDF», иначе подписываем ссылки их названиями. */}
+            {documents.map((doc) => (
               <a
-                href={documents[0].url}
+                key={doc.url}
+                href={doc.url}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center justify-center rounded-2xl border border-brand-800 px-5 py-2.5 text-base font-semibold text-brand-800 transition-colors duration-200 ease-out hover:bg-brand-800/5"
               >
-                Скачать PDF
+                {documents.length > 1 ? doc.title : "Скачать PDF"}
               </a>
-            )}
+            ))}
           </div>
         </div>
       </div>
