@@ -196,7 +196,9 @@ Siemens/ABB/Honeywell/Emerson/Endress+Hauser. Точные значения ни
 
 `components/ui/` (без бизнес-логики, только вёрстка/пропсы):
 - `Button` (варианты: primary/secondary/outline)
-- `Input`, `Textarea`, `Select`
+- `Input` (используется в инлайн-поиске шапки; `Textarea`/`Select` не заведены — были нужны
+  только под отменённую форму заявки, сейчас на сайте нет ни одной формы ввода данных кроме
+  строки поиска)
 - `Badge` (для статуса товара — принимает готовый текст пропсом, сам не хардкодит подписи;
   подписи: «Под заказ» / «Нет в поставке» — берутся из константы
   `PRODUCT_AVAILABILITY_LABELS` в `product.ts`, а не заданы внутри компонента)
@@ -213,8 +215,10 @@ Siemens/ABB/Honeywell/Emerson/Endress+Hauser. Точные значения ни
 по страницам. Только пропсы и вёрстка, без данных.
 
 `components/features/catalog/`: `ProductGrid`, `CategoryFilters`
-`components/features/product/`: `ProductGallery`, `ProductSpecsTable`, `ProductContactCta`
-(бывш. `ProductRequestCta`) — не форма, а кнопка-ссылка на `/contacts`.
+`components/features/product/`: `ProductGallery`, `ProductSpecsTable`, `ProductTabs`
+(вкладки «Описание» / «Характеристики» / «Комплектация» / «Документы», раздел 4.3.2).
+Отдельного компонента-кнопки под CTA нет — ссылка на `/contacts` вёрстается прямо в
+`app/catalog/[category]/[slug]/page.tsx` рядом с остальным информационным блоком.
 `components/features/home/`: `HeroSlider` (слайдер изображений на главной, тестовые
 заглушки), `ManufacturerLogos` (полоса логотипов по данным `lib/data/manufacturers.ts`).
 
