@@ -5,9 +5,14 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container } from "@/components/ui/Container";
 import { getCategories } from "@/lib/data/categories";
 
+// ВРЕМЕННО (аудит 2026-09-05, см. docs/seo.md): каталог сейчас наполнен тестовыми
+// данными, а не реальными товарами от поставщика — индексировать эти страницы
+// поисковиками не нужно. noindex ставится на весь /catalog/* (эту страницу и оба
+// динамических роута ниже). Снять, когда каталог наполнится реальными данными.
 export const metadata: Metadata = {
   title: "Каталог — B2B-магазин промышленного оборудования",
   description: "Категории промышленного и специализированного оборудования под заказ.",
+  robots: { index: false },
 };
 
 export default function CatalogPage() {

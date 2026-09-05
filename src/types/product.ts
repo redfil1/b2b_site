@@ -30,6 +30,18 @@ export const PRODUCT_AVAILABILITY_LABELS: Record<ProductAvailability, string> = 
   unavailable: "Нет в поставке",
 };
 
+/**
+ * Текст CTA-ссылки на карточке товара в зависимости от статуса (Product.md, п.2.2):
+ * для позиции, снятой с поставки, менеджеру сначала нужно подтвердить, актуальна ли
+ * она вообще, поэтому формулировка другая, чем для обычного обращения по доступному
+ * товару. Как и PRODUCT_AVAILABILITY_LABELS — единое место, чтобы текст не был
+ * захардкожен в компоненте карточки товара.
+ */
+export const PRODUCT_CONTACT_CTA_LABELS: Record<ProductAvailability, string> = {
+  available: "Связаться с менеджером",
+  unavailable: "Уточнить возможность поставки",
+};
+
 export interface Product {
   id: string;
   slug: string;

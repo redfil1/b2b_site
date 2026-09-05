@@ -17,7 +17,7 @@ import { PRODUCT_AVAILABILITY_BADGE_VARIANT } from "@/components/features/produc
 import { getCategory } from "@/lib/data/categories";
 import { getManufacturer } from "@/lib/data/manufacturers";
 import { getProduct, getProducts } from "@/lib/data/products";
-import { PRODUCT_AVAILABILITY_LABELS } from "@/types/product";
+import { PRODUCT_AVAILABILITY_LABELS, PRODUCT_CONTACT_CTA_LABELS } from "@/types/product";
 
 // Полный список товаров из локальных данных — все карточки пререндерятся в
 // статику (SEO.md, раздел 5). Неизвестный путь уходит в notFound() ниже.
@@ -34,8 +34,11 @@ export async function generateMetadata({
   const { category: categorySlug, slug } = await params;
   const product = getProduct(categorySlug, slug);
 
+  // ВРЕМЕННО (аудит 2026-09-05, см. docs/seo.md): карточки — тестовые данные, не
+  // реальная номенклатура поставщика. noindex снимается, когда каталог наполнится
+  // реальными данными.
   if (!product) {
-    return { title: "Товар не найден" };
+    return { title: "Товар не найден", robots: { index: false } };
   }
 
   return {
@@ -43,6 +46,7 @@ export async function generateMetadata({
     description: product.description,
     // Относительный путь → metadataBase делает его абсолютным каноническим URL.
     alternates: { canonical: `/catalog/${product.category}/${product.slug}` },
+    robots: { index: false },
   };
 }
 
@@ -137,13 +141,16 @@ export default async function ProductPage({ params }: PageProps<"/catalog/[categ
           </dl>
 
           {/* Формы заявки на сайте нет (юридическое решение, см. docs/architecture.md).
-              CTA — ссылка на /contacts, где телефон/email менеджера; сбора данных нет. */}
+              CTA — ссылка на /contacts, где телефон/email менеджера; сбора данных нет.
+              ?product=<slug> — чтобы на /contacts можно было подсказать клиенту, про
+              какой товар он писал (см. app/contacts/page.tsx). Текст CTA зависит от
+              статуса — PRODUCT_CONTACT_CTA_LABELS (types/product.ts), не хардкодится. */}
           <div className="mt-2 flex flex-wrap gap-3">
             <Link
-              href="/contacts"
+              href={`/contacts?product=${encodeURIComponent(product.slug)}`}
               className="inline-flex items-center justify-center rounded-2xl bg-brand-800 px-5 py-2.5 text-base font-semibold text-white transition-colors duration-200 ease-out hover:bg-brand-600"
             >
-              Связаться с менеджером
+              {PRODUCT_CONTACT_CTA_LABELS[product.availability]}
             </Link>
             {/* Отдельная ссылка на каждый документ: при нескольких файлах одна кнопка
                 на documents[0] прятала бы остальные. Для единственного документа —
@@ -160,6 +167,9 @@ export default async function ProductPage({ params }: PageProps<"/catalog/[categ
               </a>
             ))}
           </div>
+          <p className="text-sm text-secondary">
+            Цена и точные сроки — в коммерческом предложении от менеджера.
+          </p>
         </div>
       </div>
 

@@ -180,3 +180,12 @@ export function getProduct(category: string, slug: string): Product | undefined 
   const draft = productDrafts.find((item) => item.category === category && item.slug === slug);
   return draft ? toProduct(draft) : undefined;
 }
+
+// Поиск по одному slug, без категории — нужен для /contacts?product=<slug> (карточка
+// товара передаёт только slug, не полный путь). slug — обязательное и по факту уникальное
+// поле в каталоге, в отличие от sku (опционален, есть не у всех товаров), поэтому именно
+// он выбран идентификатором для этой ссылки.
+export function getProductBySlug(slug: string): Product | undefined {
+  const draft = productDrafts.find((item) => item.slug === slug);
+  return draft ? toProduct(draft) : undefined;
+}

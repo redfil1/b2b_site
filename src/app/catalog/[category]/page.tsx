@@ -24,8 +24,11 @@ export async function generateMetadata({
   const { category: categorySlug } = await params;
   const category = getCategory(categorySlug);
 
+  // ВРЕМЕННО (аудит 2026-09-05, см. docs/seo.md): товары категории — тестовые данные,
+  // не реальная номенклатура поставщика. noindex снимается, когда каталог наполнится
+  // реальными данными.
   if (!category) {
-    return { title: "Категория не найдена" };
+    return { title: "Категория не найдена", robots: { index: false } };
   }
 
   return {
@@ -33,6 +36,7 @@ export async function generateMetadata({
     description: category.description,
     // Относительный путь → metadataBase делает его абсолютным каноническим URL.
     alternates: { canonical: `/catalog/${category.slug}` },
+    robots: { index: false },
   };
 }
 
