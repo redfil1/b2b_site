@@ -4,7 +4,10 @@ import type { Product, ProductDraft } from "@/types/product";
 // материалов от поставщика ещё нет, см. Product.md, раздел 5). missingData оставлен
 // пустым массивом, т.к. это не реальные черновики карточек, уточнять у поставщика нечего.
 // category/manufacturer ссылаются на реально существующие slug из lib/data/categories.ts
-// и lib/data/manufacturers.ts.
+// и lib/data/manufacturers.ts. images — сгенерированные заглушки в public/images/products/
+// (тот же приём, что для hero/категорий/логотипов: простая графика на светлом фоне, не
+// стоковые фото), чтобы в галерее/лайтбоксе (ProductGallery.tsx) не было битых картинок;
+// заменяются реальными фото товаров тем же путём, когда они появятся у поставщика.
 const productDrafts: ProductDraft[] = [
   {
     id: "gas-analyzer-multi-01",

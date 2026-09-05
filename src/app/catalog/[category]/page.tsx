@@ -6,6 +6,7 @@ import {
   buildBreadcrumbLd,
   type BreadcrumbItem,
 } from "@/components/layout/Breadcrumbs";
+import { BackToTopButton } from "@/components/ui/BackToTopButton";
 import { Container } from "@/components/ui/Container";
 import { JsonLd } from "@/components/ui/JsonLd";
 import { getCategories, getCategory } from "@/lib/data/categories";
@@ -77,6 +78,12 @@ export default async function CategoryPage({ params }: PageProps<"/catalog/[cate
       ) : (
         <p className="mt-8 text-secondary">Товары в этой категории появятся позже.</p>
       )}
+
+      {/* Кнопка "наверх" — отложенный пункт аудита (раздел D, Frontend.md 4.6): страница
+          категории со списком товаров может быть длинной, кнопка появляется после
+          прокрутки и скроллит наверх. fixed — не участвует в потоке, место в разметке
+          не важно. */}
+      <BackToTopButton />
     </Container>
   );
 }
