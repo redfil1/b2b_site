@@ -15,11 +15,13 @@ const VARIANT_STYLES: Record<ButtonVariant, string> = {
   outline: "border border-brand-800 text-brand-800 hover:bg-brand-800/5",
 };
 
+// Общий набор классов кнопки — вынесен, чтобы components/ui/LinkButton (ссылка,
+// оформленная как кнопка — <button> внутри <a> невалиден по HTML) не дублировал
+// эти классы, а переиспользовал те же варианты оформления.
+export function buttonClassName(variant: ButtonVariant = "primary", className = "") {
+  return `inline-flex items-center justify-center rounded-2xl px-5 py-2.5 text-base font-semibold transition-colors duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-50 ${VARIANT_STYLES[variant]} ${className}`;
+}
+
 export function Button({ variant = "primary", className = "", ...props }: ButtonProps) {
-  return (
-    <button
-      className={`inline-flex items-center justify-center rounded-2xl px-5 py-2.5 text-base font-semibold transition-colors duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-50 ${VARIANT_STYLES[variant]} ${className}`}
-      {...props}
-    />
-  );
+  return <button className={buttonClassName(variant, className)} {...props} />;
 }

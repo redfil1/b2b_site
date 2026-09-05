@@ -47,13 +47,16 @@ const FUSE_OPTIONS: IFuseOptions<SearchEntry> = {
   ],
 };
 
+// Индекс строится один раз при загрузке модуля, а не на каждый запрос: каталог —
+// локальные данные, не меняющиеся во время работы процесса, пересборка Fuse на
+// каждый рендер страницы была лишней работой.
+const SEARCH_INDEX = new Fuse(buildSearchEntries(), FUSE_OPTIONS);
+
 export default async function SearchPage(props: PageProps<"/search">) {
   const { q } = await props.searchParams;
   const query = (typeof q === "string" ? q : "").trim();
 
-  const results: Product[] = query
-    ? new Fuse(buildSearchEntries(), FUSE_OPTIONS).search(query).map((result) => result.item)
-    : [];
+  const results: Product[] = query ? SEARCH_INDEX.search(query).map((result) => result.item) : [];
 
   return (
     <Container as="main" className="py-10">

@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
+import { LinkButton } from "@/components/ui/LinkButton";
 
 // Глобальный error boundary (Architecture.md, 2.1). Error-файлы Next.js обязаны быть
 // клиентскими компонентами. Ловит непойманные ошибки рендера в сегментах ниже
@@ -12,10 +12,6 @@ import { Container } from "@/components/ui/Container";
 //
 // Восстановление: в Next 16.3 стабильный пропс — `retry()` (пришёл на смену
 // `reset()`), повторяет рендер упавшего сегмента.
-
-// Ссылка-кнопка: <button> внутри <a> невалиден, повторяем стиль варианта outline.
-const ACTION_LINK =
-  "inline-flex items-center justify-center rounded-2xl px-5 py-2.5 text-base font-semibold transition-colors duration-200 ease-out border border-brand-800 text-brand-800 hover:bg-brand-800/5";
 
 export default function GlobalError({
   error,
@@ -40,9 +36,9 @@ export default function GlobalError({
         </p>
         <div className="mt-2 flex flex-wrap justify-center gap-3">
           <Button onClick={() => retry()}>Попробовать снова</Button>
-          <Link href="/" className={ACTION_LINK}>
+          <LinkButton href="/" variant="outline">
             На главную
-          </Link>
+          </LinkButton>
         </div>
       </Container>
     </>

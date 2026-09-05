@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
-import { PRODUCT_AVAILABILITY_BADGE_VARIANT } from "@/lib/constants/product";
+import { PRODUCT_AVAILABILITY_BADGE_VARIANT } from "@/components/features/product/productAvailabilityBadge";
 import type { Product } from "@/types/product";
 import { PRODUCT_AVAILABILITY_LABELS } from "@/types/product";
 

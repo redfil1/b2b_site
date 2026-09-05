@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { siteConfig } from "@/config/site";
 
 // Без обращения к lib/data — принимает готовый список крошек пропсом, страница сама
 // собирает его из своих данных (Project_Structure.md: components/layout — только вёрстка).
@@ -46,4 +47,26 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
       </ol>
     </nav>
   );
+}
+
+/**
+ * JSON-LD `BreadcrumbList` для той же цепочки крошек, что показывает `Breadcrumbs`
+ * (SEO.md, раздел 8.2) — те же `items` (с "Главная", добавленной автоматически),
+ * но с абсолютными URL. В отличие от видимого компонента, здесь `href` нужен и на
+ * последнем (текущем) элементе — сам компонент его для последнего элемента
+ * игнорирует, так что один и тот же список `items` можно передавать в оба места.
+ */
+export function buildBreadcrumbLd(items: BreadcrumbItem[]) {
+  const allItems: BreadcrumbItem[] = [{ label: "Главная", href: "/" }, ...items];
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: allItems.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.label,
+      item: new URL(item.href ?? "", siteConfig.url).toString(),
+    })),
+  };
 }
