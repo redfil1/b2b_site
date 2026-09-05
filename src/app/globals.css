@@ -1,10 +1,15 @@
 @import "tailwindcss";
 
 /* Акцентные цвета из Frontend.md, раздел 4.1 — обычные Tailwind-цвета (custom),
-   используются во всех цветовых утилитах (bg-brand-800, text-brand-800, border-brand-800…). */
+   используются во всех цветовых утилитах (bg-brand-800, text-brand-800, border-brand-800…).
+   accent-teal/accent-amber — расширение палитры по итогам аудита 2026-09-05 (обратная
+   связь партнёров), только для второстепенных акцентов (плитки категорий, вторичный
+   акцент рядом с CTA) — основной CTA (Button primary) остаётся на brand-800/brand-600. */
 @theme {
   --color-brand-800: #1e3a8a;
   --color-brand-600: #2563eb;
+  --color-accent-teal: #0f766e;
+  --color-accent-amber: #d97706;
 }
 
 /* --font-sans ссылается на CSS-переменную, которую next/font подставляет во время выполнения

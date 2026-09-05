@@ -167,7 +167,9 @@ export default async function ProductPage({ params }: PageProps<"/catalog/[categ
               </a>
             ))}
           </div>
-          <p className="text-sm text-secondary">
+          {/* Второстепенный акцент новой палитрой (Frontend.md, раздел 4.1, аудит 2026-09-05) —
+              лёгкий amber-фон привлекает внимание к пояснению, не конкурируя с CTA. */}
+          <p className="inline-block self-start rounded-xl bg-accent-amber/10 px-3 py-1.5 text-sm text-secondary">
             Цена и точные сроки — в коммерческом предложении от менеджера.
           </p>
         </div>
