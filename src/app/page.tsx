@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { CategoryIcon } from "@/components/features/catalog/CategoryIcon";
 import { HeroSlider } from "@/components/features/home/HeroSlider";
 import { ManufacturerLogos } from "@/components/features/home/ManufacturerLogos";
 import { Container } from "@/components/ui/Container";
@@ -32,8 +32,10 @@ export default function Home() {
 
       {/* Обзор категорий каталога — Architecture.md, раздел "Структура страниц":
           категория обязательна у товара, здесь — вход в каталог по категориям.
-          Плитка (картинка + текст) — та же вёрстка, что на /catalog (Frontend.md,
-          раздел 4.3.1), поэтому не через ui/Card: картинка идёт в край плитки. */}
+          Плитка (иконка + текст) — та же вёрстка, что на /catalog (Frontend.md,
+          раздел 4.3.1), поэтому не через ui/Card: подложка идёт в край плитки. Иконка —
+          временная схематичная замена фото категории, декоративна (aria-hidden), т.к.
+          название уже есть текстом ниже. */}
       <section className="mt-6 flex flex-col gap-6">
         <h2 className="text-2xl font-semibold text-primary md:text-3xl">Категории каталога</h2>
         <div className="grid grid-cols-1 items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -43,17 +45,9 @@ export default function Home() {
               href={`/catalog/${category.slug}`}
               className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-transform duration-200 ease-out motion-safe:hover:scale-[1.02]"
             >
-              {category.image && (
-                <div className="relative aspect-square w-full bg-secondary">
-                  <Image
-                    src={category.image}
-                    alt={category.name}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                    className="object-cover"
-                  />
-                </div>
-              )}
+              <div className="flex aspect-square w-full items-center justify-center bg-secondary">
+                <CategoryIcon slug={category.slug} aria-hidden="true" className="h-24 w-24" />
+              </div>
               <div className="flex flex-1 flex-col gap-3 p-6">
                 <h3 className="text-xl font-semibold text-primary">{category.name}</h3>
                 {category.description && <p className="text-secondary">{category.description}</p>}
