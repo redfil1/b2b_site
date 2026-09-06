@@ -28,8 +28,17 @@ function buildCartSummary(items: CartItem[]): string {
 export function CartPageClient() {
   const { items, removeItem, updateQuantity } = useCart();
   const [copied, setCopied] = useState(false);
+  const [shared, setShared] = useState(false);
 
   const summary = useMemo(() => buildCartSummary(items), [items]);
+
+  // Поддержка Web Share API проверяется прямо в теле рендера, без useState+useEffect:
+  // эта ветка компонента (return ниже, после раннего возврата для пустой корзины)
+  // на самом первом клиентском рендере (гидратация) всё равно не показывается —
+  // useCart() отдаёт EMPTY_ITEMS на гидратации (CartProvider.tsx, useSyncExternalStore
+  // с getServerSnapshot), поэтому здесь мы уже гарантированно не в проходе гидратации,
+  // и обычная проверка не создаёт риска несовпадения с серверной разметкой.
+  const canShare = typeof navigator !== "undefined" && typeof navigator.share === "function";
 
   async function handleCopy() {
     try {
@@ -39,6 +48,19 @@ export function CartPageClient() {
     } catch {
       // Clipboard API недоступен (нет разрешения/небезопасный контекст) — тихо
       // игнорируем, у клиента остаётся кнопка "Отправить на email" как альтернатива.
+    }
+  }
+
+  async function handleShare() {
+    try {
+      await navigator.share({ text: summary });
+      setShared(true);
+      window.setTimeout(() => setShared(false), 1500);
+    } catch {
+      // Пользователь закрыл системное меню "Выбрать способ отправки" без выбора
+      // приложения (AbortError) — это штатная отмена, а не ошибка, поэтому молча ничего не
+      // делаем; кнопка остаётся в обычном виде, остальные способы (email/буфер
+      // обмена) никуда не делись.
     }
   }
 
@@ -97,7 +119,16 @@ export function CartPageClient() {
                 >
                   −
                 </button>
-                <span className="w-6 text-center tabular-nums text-primary">{item.quantity}</span>
+                {/* aria-live — озвучивает скринридеру новое значение при клике по +/-
+                    (найдено при самокритичном аудите; тот же приём, что на странице
+                    товара, ProductQuantityAddToCart.tsx). */}
+                <span
+                  aria-live="polite"
+                  aria-atomic="true"
+                  className="w-6 text-center tabular-nums text-primary"
+                >
+                  {item.quantity}
+                </span>
                 <button
                   type="button"
                   onClick={() => updateQuantity(item.productSlug, item.quantity + 1)}
@@ -131,23 +162,38 @@ export function CartPageClient() {
             (Frontend.md, раздел 7.4). Второстепенный текст перед кнопками, не меняет
             их визуальный приоритет. */}
         <p className="text-sm text-secondary">
+          {canShare
+            ? "«Выбрать способ отправки» откроет системное меню — выберите там нужное приложение (мессенджер, почту и т.п.). "
+            : ""}
           Gmail и Outlook откроются в новой вкладке с уже готовым письмом. «Другая
           почта» использует вашу почтовую программу по умолчанию. Если ни один вариант
           не подошёл — скопируйте текст заявки кнопкой «Скопировать» и отправьте его
           сами через любую удобную почту или мессенджер.
         </p>
         <div className="flex flex-wrap items-start gap-3">
+          {/* Web Share API — самый удобный вариант, когда браузер его поддерживает
+              (мобильные Safari/Chrome, часть десктопных Chromium — не Firefox
+              десктоп), поэтому забирает себе роль основной кнопки (variant primary),
+              а "Отправить на email" ниже уступает ей и становится outline. Без
+              поддержки (navigator.share нет) кнопка не рендерится вовсе — canShare
+              проверяется один раз при рендере, см. комментарий выше. confirm — тот
+              же приём кратковременной обратной связи, что у "Скопировано"/"Добавлено". */}
+          {canShare && (
+            <Button type="button" variant={shared ? "confirm" : "primary"} onClick={handleShare}>
+              {shared ? "Отправлено" : "Выбрать способ отправки"}
+            </Button>
+          )}
           {/* Меню выбора почтового сервиса — нативный <details>/<summary>, без
               JS-состояния (Frontend.md, раздел 7.4: предпочтительнее самодельного
               попапа на useState, если хватает возможностей для доступной вёрстки).
-              <summary> стилизован под Button variant="primary" (buttonClassName) —
-              та же визуальная роль, что раньше была у самой ссылки "Отправить на
-              email". list-none и скрытие ::-webkit-details-marker — убирают
-              стандартный треугольник-маркер браузера, чтобы кнопка выглядела как
-              обычная, а не как <details> из коробки. */}
+              <summary> стилизован под Button (buttonClassName) — primary, если
+              "Выбрать способ отправки" не показана (эта кнопка тогда основная), иначе
+              outline (см. canShare выше). list-none и скрытие ::-webkit-details-marker —
+              убирают стандартный треугольник-маркер браузера, чтобы кнопка
+              выглядела как обычная, а не как <details> из коробки. */}
           <details className="relative">
             <summary
-              className={`${buttonClassName("primary")} cursor-pointer list-none focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-800 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden`}
+              className={`${buttonClassName(canShare ? "outline" : "primary")} cursor-pointer list-none focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-800 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden`}
             >
               Отправить на email
             </summary>
