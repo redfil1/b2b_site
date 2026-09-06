@@ -54,8 +54,12 @@ export function Footer() {
         </nav>
       </Container>
 
+      {/* pb-24 на мобильном — запас под фиксированную кнопку «Запросить КП», которая на
+          карточке товара (lg:hidden, app/catalog/[category]/[slug]/page.tsx) иначе
+          перекрывает нижние строки подвала при полной прокрутке (скрины реального
+          телефона, 2026-09-07). На lg: фиксированной панели нет — обычный отступ. */}
       <div className="border-t border-gray-200">
-        <Container as="p" className="py-4 text-sm text-secondary">
+        <Container as="p" className="pt-4 pb-24 text-sm text-secondary lg:pb-4">
           © {currentYear} {siteConfig.name}. Все права защищены.
         </Container>
       </div>

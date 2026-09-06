@@ -266,8 +266,11 @@ export default async function ProductPage({ params }: PageProps<"/catalog/[categ
           скролле по описанию/характеристикам. lg:hidden — на десктопе это место занимает
           обычная инлайновая кнопка выше (см. её className `hidden lg:inline-flex`).
           pb-28 на <Container> выше резервирует место, чтобы эта панель не перекрывала
-          последний блок контента (документы/вкладки) на мобильном. */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gray-200 bg-white p-4 lg:hidden">
+          последний блок контента (документы/вкладки) на мобильном; подвал получает свой
+          нижний отступ во Footer.tsx. Восходящая тень (2026-09-07, по скринам реального
+          телефона) — чтобы панель читалась как отдельный слой, а не сливалась с текстом,
+          который проезжает под ней при скролле. */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gray-200 bg-white p-4 shadow-[0_-1px_12px_rgba(15,23,42,0.12)] lg:hidden">
         <Link
           href={`/contacts?product=${encodeURIComponent(product.slug)}`}
           className="flex w-full items-center justify-center rounded-2xl bg-brand-800 px-5 py-3 text-base font-semibold text-white transition-colors duration-200 ease-out hover:bg-brand-600"

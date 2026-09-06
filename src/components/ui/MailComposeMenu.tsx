@@ -15,7 +15,11 @@ export interface MailComposeMenuProps {
   /** Подпись последнего пункта. По умолчанию «Другая почта»; для варианта «Отправить
    *  себе» (Frontend.md 8.6) осмысленнее «Почтовая программа». */
   fallbackLabel?: string;
+  /** Класс на обёртке <details>. */
   className?: string;
+  /** Класс на <summary>-кнопке — например, чтобы растянуть её на всю ширину на
+   *  мобильном (`w-full sm:w-auto`), когда меню в общем столбце действий. */
+  summaryClassName?: string;
 }
 
 const ITEM_CLASSNAME =
@@ -27,11 +31,12 @@ export function MailComposeMenu({
   variant = "primary",
   fallbackLabel = "Другая почта",
   className = "",
+  summaryClassName = "",
 }: MailComposeMenuProps) {
   return (
     <details className={`relative ${className}`}>
       <summary
-        className={`${buttonClassName(variant)} cursor-pointer list-none focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-800 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden`}
+        className={`${buttonClassName(variant)} cursor-pointer list-none focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-800 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden ${summaryClassName}`}
       >
         {label}
       </summary>

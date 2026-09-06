@@ -1,5 +1,6 @@
 "use client";
 
+import { Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/Button";
@@ -202,13 +203,16 @@ export function CartPageClient() {
                 </button>
               </div>
 
+              {/* Иконка-кнопка вместо текстовой ссылки «Удалить» — на мобильном текстовая
+                  ссылка была слишком мелкой тап-целью почти вплотную к «+» (скрины
+                  реального телефона, 2026-09-07). h-10 w-10 — комфортная зона нажатия. */}
               <button
                 type="button"
                 onClick={() => removeItem(item.productSlug)}
                 aria-label={`Удалить «${item.title}» из корзины`}
-                className="rounded-lg text-sm text-secondary underline-offset-2 transition-colors duration-200 ease-out hover:text-primary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-800 focus-visible:ring-offset-2"
+                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-secondary transition-colors duration-200 ease-out hover:bg-secondary hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-800 focus-visible:ring-offset-2"
               >
-                Удалить
+                <Trash2 className="h-5 w-5" aria-hidden="true" />
               </button>
             </div>
           </li>
@@ -252,23 +256,19 @@ export function CartPageClient() {
           остаётся: используется в теле письма (mailto:/Gmail/Outlook), в Web Share и
           при копировании ниже — просто больше не рендерится сам по себе. */}
       <div className="flex flex-col gap-2">
-        {/* Единый поясняющий блок — раньше здесь было два отдельных текста (про меню
-            почты и отдельно про назначение "Скопировать"), объединены в один
-            (Frontend.md, раздел 7.4). Второстепенный текст перед кнопками, не меняет
-            их визуальный приоритет. Тема письма содержит код заявки [{requestCode}] —
-            по нему потом удобно сослаться на конкретную заявку в разговоре с менеджером. */}
+        {/* Короткий поясняющий текст (сокращён 2026-09-07 по скринам реального телефона —
+            прежний абзац занимал 8 строк на мобильном). Тема письма несёт код заявки
+            [{requestCode}] — по нему удобно сослаться на заявку в разговоре с менеджером. */}
         <p className="text-sm text-secondary">
-          {canShare
-            ? "«Выбрать способ отправки» откроет системное меню — выберите там нужное приложение (мессенджер, почту и т.п.). "
-            : ""}
-          Gmail и Outlook откроются в новой вкладке с уже готовым письмом. «Другая почта» использует
-          вашу почтовую программу по умолчанию. «Отправить себе» — то же письмо без адреса
-          получателя, чтобы сохранить состав заявки. Если ни один вариант не подошёл — скопируйте
-          текст кнопкой «Скопировать». Тема письма содержит код заявки{" "}
-          <span className="tabular-nums text-primary">[{requestCode}]</span> — на него удобно
-          сослаться при разговоре с менеджером.
+          Выберите способ отправки. Если ни один не подошёл — нажмите «Скопировать» и отправьте
+          текст сами. Тема письма содержит код заявки{" "}
+          <span className="tabular-nums text-primary">[{requestCode}]</span> — по нему удобно
+          сослаться на эту заявку в разговоре с менеджером.
         </p>
-        <div className="flex flex-wrap items-start gap-3">
+        {/* На мобильном действия идут в столбик во всю ширину (кнопки-крохи вразнобой
+            плохо читались — скрины реального телефона, 2026-09-07); с sm: — прежний
+            ряд с переносом. */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start">
           {/* Web Share API — самый удобный вариант, когда браузер его поддерживает
               (мобильные Safari/Chrome, часть десктопных Chromium — не Firefox
               десктоп), поэтому забирает себе роль основной кнопки (variant primary),
@@ -277,7 +277,12 @@ export function CartPageClient() {
               проверяется один раз при рендере, см. комментарий выше. confirm — тот
               же приём кратковременной обратной связи, что у "Скопировано"/"Добавлено". */}
           {canShare && (
-            <Button type="button" variant={shared ? "confirm" : "primary"} onClick={handleShare}>
+            <Button
+              type="button"
+              variant={shared ? "confirm" : "primary"}
+              onClick={handleShare}
+              className="w-full sm:w-auto"
+            >
               {shared ? "Отправлено" : "Выбрать способ отправки"}
             </Button>
           )}
@@ -289,6 +294,8 @@ export function CartPageClient() {
             label="Отправить на email"
             links={managerLinks}
             variant={canShare ? "outline" : "primary"}
+            className="w-full sm:w-auto"
+            summaryClassName="w-full sm:w-auto"
           />
           {/* «Отправить себе» (Frontend.md, раздел 8.6) — тем же меню, второстепенное
               действие (outline); последний пункт назван «Почтовая программа», т.к.
@@ -298,11 +305,18 @@ export function CartPageClient() {
             links={selfLinks}
             variant="outline"
             fallbackLabel="Почтовая программа"
+            className="w-full sm:w-auto"
+            summaryClassName="w-full sm:w-auto"
           />
           {/* confirm — тот же приём, что у AddToCartButton (раздел 7.3): временный
               вариант оформления на время показа "Скопировано", accent-teal вместо
               обычного цвета кнопки. */}
-          <Button type="button" variant={copied ? "confirm" : "outline"} onClick={handleCopy}>
+          <Button
+            type="button"
+            variant={copied ? "confirm" : "outline"}
+            onClick={handleCopy}
+            className="w-full sm:w-auto"
+          >
             {copied ? "Скопировано" : "Скопировать"}
           </Button>
         </div>
