@@ -70,7 +70,9 @@ export function Header() {
         </nav>
 
         <div className="flex shrink-0 items-center gap-3">
-          <HeaderSearch className="hidden w-36 md:block lg:w-56" />
+          {/* Расширено по итогам дизайн-ревью, 2026-09-06: узкое поле (было lg:w-56)
+              не помещало длинные артикулы/названия при вводе. */}
+          <HeaderSearch className="hidden w-36 md:block lg:w-72 xl:w-80" />
 
           <Link href="/contacts" className="hidden sm:inline-flex">
             <span className={CONTACT_CTA_CLASSNAME}>Связаться с менеджером</span>

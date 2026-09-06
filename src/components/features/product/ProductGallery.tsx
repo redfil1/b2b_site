@@ -138,11 +138,16 @@ export function ProductGallery({ title, images }: ProductGalleryProps) {
         }`}
       >
         <div className="relative">
+          {/* В разметке не было ни одного focus:/focus-visible: класса — синее кольцо на
+              iPhone/Safari при обычном тапе было нативным дефолтным outline браузера на
+              :focus, не наш стиль. focus:outline-none снимает его для любого фокуса,
+              focus-visible:ring-* возвращает кольцо только для реальной клавиатурной
+              навигации (Tab), которую :focus-visible отличает от тапа/клика по кнопке. */}
           <button
             type="button"
             onClick={closeLightbox}
             aria-label="Закрыть увеличенное фото"
-            className="absolute -top-3 -right-3 z-10 inline-flex items-center justify-center rounded-full bg-white p-2 text-primary shadow-md transition-colors duration-200 ease-out hover:bg-secondary"
+            className="absolute -top-3 -right-3 z-10 inline-flex items-center justify-center rounded-full bg-white p-2 text-primary shadow-md transition-colors duration-200 ease-out hover:bg-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-800 focus-visible:ring-offset-2"
           >
             <X className="h-5 w-5" />
           </button>

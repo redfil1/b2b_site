@@ -4,7 +4,7 @@ import type { HTMLAttributes } from "react";
 // Универсальный компонент: принимает готовый текст (label) и цветовой вариант пропсами,
 // сам не хардкодит конкретные статусы товара — подстановка реальных подписей
 // (PRODUCT_AVAILABILITY_LABELS из types/product.ts) остаётся за components/features/*.
-export type BadgeVariant = "neutral" | "success" | "warning" | "danger";
+export type BadgeVariant = "neutral" | "info" | "success" | "warning" | "danger";
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   label: string;
@@ -13,8 +13,12 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 
 // success/warning/danger — временные семантические цвета статуса (Frontend.md, раздел 4.1:
 // в брифе не описаны, оставлены стандартные emerald-600/amber-600/red-600).
+// info — добавлен по итогам дизайн-ревью, 2026-09-06 (Frontend.md, раздел 4.1/4.4):
+// нейтральный тон на accent-teal из палитры бренда, а не «успех» — используется для
+// статуса availability 'available', чтобы не читаться как «в наличии прямо сейчас».
 const VARIANT_STYLES: Record<BadgeVariant, string> = {
   neutral: "bg-secondary text-secondary",
+  info: "bg-teal-50 text-accent-teal",
   success: "bg-emerald-50 text-emerald-600",
   warning: "bg-amber-50 text-amber-600",
   danger: "bg-red-50 text-red-600",

@@ -37,8 +37,11 @@ export const PRODUCT_AVAILABILITY_LABELS: Record<ProductAvailability, string> = 
  * товару. Как и PRODUCT_AVAILABILITY_LABELS — единое место, чтобы текст не был
  * захардкожен в компоненте карточки товара.
  */
+// available: "Запросить КП" — переименовано по итогам дизайн-ревью, 2026-09-06
+// (Product.md, п.2.2): привычная терминология для российских B2B-закупщиков.
+// Кнопка в Header — отдельная точка входа, этого переименования не касается.
 export const PRODUCT_CONTACT_CTA_LABELS: Record<ProductAvailability, string> = {
-  available: "Связаться с менеджером",
+  available: "Запросить КП",
   unavailable: "Уточнить возможность поставки",
 };
 
