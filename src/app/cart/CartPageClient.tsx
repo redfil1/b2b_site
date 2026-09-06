@@ -53,12 +53,17 @@ export function CartPageClient() {
     );
   }
 
-  // mailto: — не внутренний роут приложения, поэтому обычная <a>, а не next/link Link
-  // (тот же принцип, что у ссылок на документы товара, ProductGallery.tsx/page.tsx:
-  // Link — для переходов по сайту, <a> — для остального, включая mailto:/tel:).
+  // mailto:/Gmail/Outlook — не внутренние роуты приложения, поэтому обычные <a>, а не
+  // next/link Link (тот же принцип, что у ссылок на документы товара,
+  // ProductGallery.tsx/page.tsx: Link — для переходов по сайту, <a> — для остального).
+  // Три варианта вместо одной ссылки mailto: — решено по итогам обсуждения способов
+  // связи с менеджером, 2026-09-06 (Frontend.md, раздел 7.4).
   const mailSubject = encodeURIComponent(`Запрос по товарам — ${siteConfig.name}`);
   const mailBody = encodeURIComponent(summary);
+  const encodedEmail = encodeURIComponent(siteConfig.contacts.email);
   const mailtoHref = `mailto:${siteConfig.contacts.email}?subject=${mailSubject}&body=${mailBody}`;
+  const gmailHref = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodedEmail}&su=${mailSubject}&body=${mailBody}`;
+  const outlookHref = `https://outlook.live.com/mail/0/deeplink/compose?to=${encodedEmail}&subject=${mailSubject}&body=${mailBody}`;
 
   return (
     <div className="mt-8 flex flex-col gap-8">
@@ -121,13 +126,65 @@ export function CartPageClient() {
         <pre className="whitespace-pre-wrap font-sans text-sm text-primary">{summary}</pre>
       </div>
 
-      <div className="flex flex-wrap gap-3">
-        <a href={mailtoHref} className={buttonClassName("primary")}>
-          Отправить на email
-        </a>
-        <Button type="button" variant="outline" onClick={handleCopy}>
-          {copied ? "Скопировано" : "Скопировать"}
-        </Button>
+      <div className="flex flex-col gap-2">
+        {/* Второстепенная подсказка — уточняет разницу между вариантами меню (Gmail/
+            Outlook — веб-сервисы в новой вкладке, «Другая почта» — системный
+            обработчик mailto:), Frontend.md, раздел 7.4. Мелкий текст перед кнопками,
+            не меняет их визуальный приоритет; "ниже" в тексте — про саму кнопку
+            "Скопировать" в ряду под подсказкой. */}
+        <p className="text-sm text-secondary">
+          Gmail и Outlook откроются в новой вкладке с уже готовым письмом. «Другая
+          почта» использует вашу почтовую программу по умолчанию. Не подошло —
+          воспользуйтесь кнопкой «Скопировать» ниже.
+        </p>
+        <div className="flex flex-wrap items-start gap-3">
+          {/* Меню выбора почтового сервиса — нативный <details>/<summary>, без
+              JS-состояния (Frontend.md, раздел 7.4: предпочтительнее самодельного
+              попапа на useState, если хватает возможностей для доступной вёрстки).
+              <summary> стилизован под Button variant="primary" (buttonClassName) —
+              та же визуальная роль, что раньше была у самой ссылки "Отправить на
+              email". list-none и скрытие ::-webkit-details-marker — убирают
+              стандартный треугольник-маркер браузера, чтобы кнопка выглядела как
+              обычная, а не как <details> из коробки. */}
+          <details className="relative">
+            <summary
+              className={`${buttonClassName("primary")} cursor-pointer list-none focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-800 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden`}
+            >
+              Отправить на email
+            </summary>
+            {/* shadow-md, а не shadow-sm — это плавающая панель поверх контента (тот же
+                уровень приподнятости, что у крестика лайтбокса галереи, ProductGallery.tsx),
+                а не обычная карточка на странице (там достаточно shadow-sm, Frontend.md,
+                раздел 4.3). */}
+            <div className="absolute left-0 z-10 mt-2 flex w-56 flex-col gap-1 rounded-2xl border border-gray-200 bg-white p-2 shadow-md">
+              <a
+                href={gmailHref}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-xl px-4 py-2.5 text-sm text-primary transition-colors duration-200 ease-out hover:bg-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-800"
+              >
+                Gmail
+              </a>
+              <a
+                href={outlookHref}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-xl px-4 py-2.5 text-sm text-primary transition-colors duration-200 ease-out hover:bg-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-800"
+              >
+                Outlook
+              </a>
+              <a
+                href={mailtoHref}
+                className="rounded-xl px-4 py-2.5 text-sm text-primary transition-colors duration-200 ease-out hover:bg-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-800"
+              >
+                Другая почта
+              </a>
+            </div>
+          </details>
+          <Button type="button" variant="outline" onClick={handleCopy}>
+            {copied ? "Скопировано" : "Скопировать"}
+          </Button>
+        </div>
       </div>
     </div>
   );

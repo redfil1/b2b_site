@@ -42,7 +42,15 @@ export function ProductQuantityAddToCart({ product }: ProductQuantityAddToCartPr
           +
         </button>
       </div>
-      <AddToCartButton product={product} quantity={quantity} variant="outline" />
+      {/* onAdded — сбрасывает выбранное количество обратно к 1 после успешного
+          добавления, чтобы значение не оставалось "залипшим" (например, на 5) для
+          следующего добавления той же позиции. */}
+      <AddToCartButton
+        product={product}
+        quantity={quantity}
+        variant="outline"
+        onAdded={() => setQuantity(1)}
+      />
     </div>
   );
 }
