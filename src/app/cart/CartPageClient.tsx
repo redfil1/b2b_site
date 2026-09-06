@@ -121,11 +121,10 @@ export function CartPageClient() {
         ))}
       </ul>
 
-      <div className="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-secondary p-4">
-        <p className="text-sm font-medium text-primary">Сводка для менеджера</p>
-        <pre className="whitespace-pre-wrap font-sans text-sm text-primary">{summary}</pre>
-      </div>
-
+      {/* Текстовый блок сводки на странице убран — дублировал список товаров выше
+          (был виден как отдельная "Сводка для менеджера"). summary как строка
+          остаётся: используется в теле письма (mailto:/Gmail/Outlook) и при
+          копировании в буфер ниже — просто больше не рендерится сам по себе. */}
       <div className="flex flex-col gap-2">
         {/* Единый поясняющий блок — раньше здесь было два отдельных текста (про меню
             почты и отдельно про назначение "Скопировать"), объединены в один
