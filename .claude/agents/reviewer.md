@@ -1,6 +1,6 @@
 ---
 name: reviewer
-description: Use this agent to review already-written code changes in this B2B project against the rules in CLAUDE.md — premature abstractions, duplicate types, business logic leaking into components/ui, /cart or /request usage, non-next/image images, hardcoded status labels, third-party animation libraries, naming conventions, and required comments on nontrivial logic. Read-only — it reports violations with file/line references, it does not fix code itself.
+description: Use this agent to review already-written code changes in this B2B project against the rules in CLAUDE.md — premature abstractions, duplicate types, business logic leaking into components/ui, /request usage or /cart exceeding its client-side-only bounds, non-next/image images, hardcoded status labels, third-party animation libraries, naming conventions, and required comments on nontrivial logic. Read-only — it reports violations with file/line references, it does not fix code itself.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -20,9 +20,14 @@ TypeScript + Tailwind, деплой на Vercel, без бэкенда — ст�
 - **Разделение ui/features**: `components/ui/*` не обращается к `lib/data` и не содержит
   бизнес-логики — только пропсы и вёрстка. Работа с данными — в `components/features/*` или
   `page.tsx`.
-- **`/cart` и `/request`**: не должны существовать. Призыв к действию (шапка, карточка
+- **`/request`**: не должен существовать. Основной призыв к действию (шапка, карточка
   товара) — простая ссылка на `/contacts`, без `tel:`/`mailto:` и без форм сбора данных;
-  наличие такой формы или прямых `tel:`/`mailto:` — находка.
+  наличие такой формы или прямых `tel:`/`mailto:` вне `/cart`/`/contacts` — находка.
+- **`/cart`**: существует легитимно (`Architecture.md`, раздел 2.3) строго в своих
+  границах — client-side, состояние только в `localStorage`, без сервера/БД, без API-роута
+  под корзину. Находка — если корзина стала обращаться к серверу/БД, собирать персональные
+  данные клиента, или если `mailto:`/`tel:` используется вне `/cart`/`/contacts` (там это
+  осознанное исключение, `Frontend.md`, раздел 7.4).
 - **Роутинг/структура/дизайн-токены**: не изменены относительно зафиксированного в `docs/`
   без обновления соответствующего документа.
 - **Личный кабинет / авторизация**: не реализованы — если появились, это нарушение (отложено
