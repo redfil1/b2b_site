@@ -2,35 +2,95 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { Button, buttonClassName } from "@/components/ui/Button";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import { LinkButton } from "@/components/ui/LinkButton";
+import { MailComposeMenu } from "@/components/ui/MailComposeMenu";
+import { Textarea } from "@/components/ui/Textarea";
 import { siteConfig } from "@/config/site";
 import { useCart } from "@/hooks/useCart";
+import { buildMailLinks } from "@/lib/utils/mailLinks";
 import type { CartItem } from "@/types/cart";
 
-// Текстовая сводка корзины — используется и в теле письма (mailto:), и при копировании
-// в буфер обмена (Frontend.md, раздел 7.4), поэтому одна функция форматирует текст
-// одинаково для обоих способов. Отдельный файл/тип под неё не заводится — используется
-// только здесь, переиспользования вне /cart нет (Project_Structure.md, правило против
-// абстракций без необходимости).
-function buildCartSummary(items: CartItem[]): string {
-  return items
-    .map((item) => {
-      const modelPart = item.model ? ` (${item.model})` : "";
-      // sku опционален (не у всех товаров есть, Product.sku/types/cart.ts) — добавляется
-      // в строку только если заполнен у конкретной позиции.
-      const skuPart = item.sku ? `, арт. ${item.sku}` : "";
-      return `${item.title}${modelPart}${skuPart} — количество: ${item.quantity}`;
-    })
-    .join("\n");
+// Необязательные поля контекста над кнопками (Frontend.md, раздел 8.3). Это НЕ форма
+// сбора данных: значения никуда не отправляются и не сохраняются (ни на сервер, ни в
+// localStorage — в отличие от состава корзины), они лишь дописываются в текст сводки,
+// который клиент сам копирует или отправляет своей почтой (Architecture.md, раздел 2.3).
+interface CartContextFields {
+  company: string;
+  city: string;
+  comment: string;
+}
+
+// Текстовая сводка корзины — используется в теле письма (mailto:/Gmail/Outlook), при
+// копировании и в Web Share (Frontend.md, разделы 7.4, 8.3, 8.6), поэтому одна функция
+// форматирует текст одинаково для всех способов. Отдельный файл/тип под неё не заводится
+// — переиспользования вне /cart нет (Project_Structure.md, правило против абстракций без
+// необходимости).
+function buildCartSummary(
+  items: CartItem[],
+  context: CartContextFields,
+  requestCode: string,
+): string {
+  const contextLines = [
+    context.company.trim() ? `Компания: ${context.company.trim()}` : "",
+    context.city.trim() ? `Город доставки: ${context.city.trim()}` : "",
+    context.comment.trim() ? `Комментарий: ${context.comment.trim()}` : "",
+  ].filter(Boolean);
+
+  const itemLines = items.map((item) => {
+    const modelPart = item.model ? ` (${item.model})` : "";
+    // sku опционален (не у всех товаров есть, Product.sku/types/cart.ts) — добавляется
+    // в строку только если заполнен у конкретной позиции.
+    const skuPart = item.sku ? `, арт. ${item.sku}` : "";
+    return `${item.title}${modelPart}${skuPart} — количество: ${item.quantity}`;
+  });
+
+  return [
+    `Заявка [${requestCode}]`,
+    "",
+    ...contextLines,
+    ...(contextLines.length > 0 ? [""] : []),
+    ...itemLines,
+  ].join("\n");
+}
+
+// Короткий человекочитаемый код заявки (Frontend.md, раздел 8.6) — детерминированно из
+// состава корзины (productSlug + количество) и текущей даты. Нигде не сохраняется, не
+// номер в реестре: нужен только чтобы клиент и менеджер могли сослаться на «заявку XXXX»
+// в переписке, а не пересказывать состав. Меняется при изменении состава или в другой
+// день — осознанное свойство (там же). FNV-1a — короткий стабильный хэш, без
+// крипто-требований (это не безопасность).
+function buildRequestCode(items: CartItem[]): string {
+  const basis =
+    new Date().toISOString().slice(0, 10) +
+    "|" +
+    items
+      .map((item) => `${item.productSlug}:${item.quantity}`)
+      .sort()
+      .join(",");
+
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < basis.length; i += 1) {
+    hash ^= basis.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return (hash >>> 0).toString(36).toUpperCase().padStart(4, "0").slice(0, 4);
 }
 
 export function CartPageClient() {
   const { items, removeItem, updateQuantity } = useCart();
   const [copied, setCopied] = useState(false);
   const [shared, setShared] = useState(false);
+  const [company, setCompany] = useState("");
+  const [city, setCity] = useState("");
+  const [comment, setComment] = useState("");
 
-  const summary = useMemo(() => buildCartSummary(items), [items]);
+  const requestCode = useMemo(() => buildRequestCode(items), [items]);
+  const summary = useMemo(
+    () => buildCartSummary(items, { company, city, comment }, requestCode),
+    [items, company, city, comment, requestCode],
+  );
 
   // Поддержка Web Share API проверяется прямо в теле рендера, без useState+useEffect:
   // эта ветка компонента (return ниже, после раннего возврата для пустой корзины)
@@ -53,7 +113,7 @@ export function CartPageClient() {
 
   async function handleShare() {
     try {
-      await navigator.share({ text: summary });
+      await navigator.share({ title: `Заявка ${requestCode}`, text: summary });
       setShared(true);
       window.setTimeout(() => setShared(false), 1500);
     } catch {
@@ -75,17 +135,20 @@ export function CartPageClient() {
     );
   }
 
-  // mailto:/Gmail/Outlook — не внутренние роуты приложения, поэтому обычные <a>, а не
-  // next/link Link (тот же принцип, что у ссылок на документы товара,
-  // ProductGallery.tsx/page.tsx: Link — для переходов по сайту, <a> — для остального).
-  // Три варианта вместо одной ссылки mailto: — решено по итогам обсуждения способов
-  // связи с менеджером, 2026-09-06 (Frontend.md, раздел 7.4).
-  const mailSubject = encodeURIComponent(`Запрос по товарам — ${siteConfig.name}`);
-  const mailBody = encodeURIComponent(summary);
-  const encodedEmail = encodeURIComponent(siteConfig.contacts.email);
-  const mailtoHref = `mailto:${siteConfig.contacts.email}?subject=${mailSubject}&body=${mailBody}`;
-  const gmailHref = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodedEmail}&su=${mailSubject}&body=${mailBody}`;
-  const outlookHref = `https://outlook.live.com/mail/0/deeplink/compose?to=${encodedEmail}&subject=${mailSubject}&body=${mailBody}`;
+  // Наборы ссылок «открыть письмо в …» (Frontend.md, разделы 7.4, 8.6) — одинаковый
+  // формат URL для менеджера и для варианта «себе», строится в lib/utils/mailLinks.ts.
+  // Код заявки — в теме всех вариантов (в т.ч. Web Share выше через title/text).
+  const managerLinks = buildMailLinks({
+    to: siteConfig.contacts.email,
+    subject: `Запрос по товарам [${requestCode}] — ${siteConfig.name}`,
+    body: summary,
+  });
+  // Вариант «Отправить себе»: получателя нет — клиент вписывает свой адрес сам.
+  const selfLinks = buildMailLinks({
+    to: "",
+    subject: `Моя заявка [${requestCode}] — ${siteConfig.name}`,
+    body: summary,
+  });
 
   return (
     <div className="mt-8 flex flex-col gap-8">
@@ -152,23 +215,58 @@ export function CartPageClient() {
         ))}
       </ul>
 
+      {/* Необязательные поля контекста (Frontend.md, раздел 8.3). Не форма: значения
+          только дописываются в текст сводки ниже, никуда не отправляются и не
+          сохраняются. */}
+      <div className="flex flex-col gap-3">
+        <p className="text-sm text-secondary">
+          Поля ниже необязательны и никуда не отправляются — они лишь добавляются в текст заявки,
+          который вы копируете или отправляете сами.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label className="flex flex-col gap-1 text-sm text-secondary">
+            Компания
+            <Input
+              value={company}
+              onChange={(event) => setCompany(event.target.value)}
+              autoComplete="organization"
+            />
+          </label>
+          <label className="flex flex-col gap-1 text-sm text-secondary">
+            Город доставки
+            <Input
+              value={city}
+              onChange={(event) => setCity(event.target.value)}
+              autoComplete="address-level2"
+            />
+          </label>
+        </div>
+        <label className="flex flex-col gap-1 text-sm text-secondary">
+          Комментарий
+          <Textarea value={comment} onChange={(event) => setComment(event.target.value)} />
+        </label>
+      </div>
+
       {/* Текстовый блок сводки на странице убран — дублировал список товаров выше
           (был виден как отдельная "Сводка для менеджера"). summary как строка
-          остаётся: используется в теле письма (mailto:/Gmail/Outlook) и при
-          копировании в буфер ниже — просто больше не рендерится сам по себе. */}
+          остаётся: используется в теле письма (mailto:/Gmail/Outlook), в Web Share и
+          при копировании ниже — просто больше не рендерится сам по себе. */}
       <div className="flex flex-col gap-2">
         {/* Единый поясняющий блок — раньше здесь было два отдельных текста (про меню
             почты и отдельно про назначение "Скопировать"), объединены в один
             (Frontend.md, раздел 7.4). Второстепенный текст перед кнопками, не меняет
-            их визуальный приоритет. */}
+            их визуальный приоритет. Тема письма содержит код заявки [{requestCode}] —
+            по нему потом удобно сослаться на конкретную заявку в разговоре с менеджером. */}
         <p className="text-sm text-secondary">
           {canShare
             ? "«Выбрать способ отправки» откроет системное меню — выберите там нужное приложение (мессенджер, почту и т.п.). "
             : ""}
           Gmail и Outlook откроются в новой вкладке с уже готовым письмом. «Другая почта» использует
-          вашу почтовую программу по умолчанию. Если ни один вариант не подошёл — скопируйте текст
-          заявки кнопкой «Скопировать» и отправьте его сами через любую удобную почту или
-          мессенджер.
+          вашу почтовую программу по умолчанию. «Отправить себе» — то же письмо без адреса
+          получателя, чтобы сохранить состав заявки. Если ни один вариант не подошёл — скопируйте
+          текст кнопкой «Скопировать». Тема письма содержит код заявки{" "}
+          <span className="tabular-nums text-primary">[{requestCode}]</span> — на него удобно
+          сослаться при разговоре с менеджером.
         </p>
         <div className="flex flex-wrap items-start gap-3">
           {/* Web Share API — самый удобный вариант, когда браузер его поддерживает
@@ -183,49 +281,24 @@ export function CartPageClient() {
               {shared ? "Отправлено" : "Выбрать способ отправки"}
             </Button>
           )}
-          {/* Меню выбора почтового сервиса — нативный <details>/<summary>, без
-              JS-состояния (Frontend.md, раздел 7.4: предпочтительнее самодельного
-              попапа на useState, если хватает возможностей для доступной вёрстки).
-              <summary> стилизован под Button (buttonClassName) — primary, если
-              "Выбрать способ отправки" не показана (эта кнопка тогда основная), иначе
-              outline (см. canShare выше). list-none и скрытие ::-webkit-details-marker —
-              убирают стандартный треугольник-маркер браузера, чтобы кнопка
-              выглядела как обычная, а не как <details> из коробки. */}
-          <details className="relative">
-            <summary
-              className={`${buttonClassName(canShare ? "outline" : "primary")} cursor-pointer list-none focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-800 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden`}
-            >
-              Отправить на email
-            </summary>
-            {/* shadow-md, а не shadow-sm — это плавающая панель поверх контента (тот же
-                уровень приподнятости, что у крестика лайтбокса галереи, ProductGallery.tsx),
-                а не обычная карточка на странице (там достаточно shadow-sm, Frontend.md,
-                раздел 4.3). */}
-            <div className="absolute left-0 z-10 mt-2 flex w-56 flex-col gap-1 rounded-2xl border border-gray-200 bg-white p-2 shadow-md">
-              <a
-                href={gmailHref}
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-xl px-4 py-2.5 text-sm text-primary transition-colors duration-200 ease-out hover:bg-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-800"
-              >
-                Gmail
-              </a>
-              <a
-                href={outlookHref}
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-xl px-4 py-2.5 text-sm text-primary transition-colors duration-200 ease-out hover:bg-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-800"
-              >
-                Outlook
-              </a>
-              <a
-                href={mailtoHref}
-                className="rounded-xl px-4 py-2.5 text-sm text-primary transition-colors duration-200 ease-out hover:bg-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-800"
-              >
-                Другая почта
-              </a>
-            </div>
-          </details>
+          {/* Меню выбора почтового сервиса — презентационный MailComposeMenu
+              (components/ui): нативный <details>/<summary> без JS-состояния
+              (Frontend.md, раздел 7.4). primary, если "Выбрать способ отправки" не
+              показана (тогда это основное действие), иначе outline. */}
+          <MailComposeMenu
+            label="Отправить на email"
+            links={managerLinks}
+            variant={canShare ? "outline" : "primary"}
+          />
+          {/* «Отправить себе» (Frontend.md, раздел 8.6) — тем же меню, второстепенное
+              действие (outline); последний пункт назван «Почтовая программа», т.к.
+              адреса получателя нет. */}
+          <MailComposeMenu
+            label="Отправить себе"
+            links={selfLinks}
+            variant="outline"
+            fallbackLabel="Почтовая программа"
+          />
           {/* confirm — тот же приём, что у AddToCartButton (раздел 7.3): временный
               вариант оформления на время показа "Скопировано", accent-teal вместо
               обычного цвета кнопки. */}

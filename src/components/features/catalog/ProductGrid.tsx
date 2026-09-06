@@ -1,3 +1,4 @@
+import { Clock } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { CategoryIcon } from "@/components/features/catalog/CategoryIcon";
@@ -37,6 +38,14 @@ export function ProductGrid({ products }: ProductGridProps) {
             <h3 className="text-xl font-semibold text-primary">{product.title}</h3>
             {product.model && <p className="text-sm text-secondary">Модель: {product.model}</p>}
             <p className="line-clamp-3 text-secondary">{product.description}</p>
+            {/* Срок поставки отдельной строкой, не только в бейдже наличия (Frontend.md,
+                раздел 8.5): бейдж «Под заказ» одинаков почти у всех позиций, а срок —
+                то, по чему реально сканируют список. mt-auto прижимает строку к низу
+                карточки, чтобы она была на одной линии у всех карточек ряда. */}
+            <p className="mt-auto flex items-center gap-1.5 pt-1 text-sm text-secondary">
+              <Clock aria-hidden="true" className="h-4 w-4 shrink-0" />
+              Срок поставки: {product.deliveryTime}
+            </p>
           </div>
         </Link>
       ))}

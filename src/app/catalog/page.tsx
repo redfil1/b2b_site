@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CategoryIcon } from "@/components/features/catalog/CategoryIcon";
+import { RecentlyViewedProducts } from "@/components/features/home/RecentlyViewedProducts";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container } from "@/components/ui/Container";
 import { getCategories } from "@/lib/data/categories";
@@ -71,6 +72,28 @@ export default function CatalogPage() {
           </Link>
         ))}
       </div>
+
+      {/* Каталог — витрина-пример возможностей, не полный прайс: реальный ассортимент
+          шире того, что заведено в локальных данных (Frontend.md, раздел 8.8;
+          Architecture.md, раздел 2). Спокойный информационный блок; единственный
+          призыв к действию вне карточки товара — ссылка на /contacts (CLAUDE.md). */}
+      <div className="mt-12 rounded-2xl border border-gray-200 bg-secondary p-6">
+        <h2 className="text-xl font-semibold text-primary">Не нашли нужную модель?</h2>
+        <p className="mt-2 max-w-2xl text-secondary">
+          В каталоге — примеры оборудования, которое мы поставляем. Опишите требуемые
+          характеристики, и менеджер подберёт и привезёт подходящую позицию под заказ.
+        </p>
+        <Link
+          href="/contacts"
+          className="mt-4 inline-flex items-center justify-center rounded-2xl bg-brand-800 px-5 py-2.5 text-base font-semibold text-white transition-colors duration-200 ease-out hover:bg-brand-600"
+        >
+          Связаться с менеджером
+        </Link>
+      </div>
+
+      {/* Блок «Вы недавно смотрели» (Frontend.md, раздел 8.7) — не рендерится при пустом
+          списке localStorage. */}
+      <RecentlyViewedProducts />
     </Container>
   );
 }

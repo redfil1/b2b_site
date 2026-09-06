@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container } from "@/components/ui/Container";
 import { DraftNotice } from "@/components/ui/DraftNotice";
+import { MailComposeMenu } from "@/components/ui/MailComposeMenu";
 import { siteConfig } from "@/config/site";
 import { getProductBySlug } from "@/lib/data/products";
+import { buildMailLinks } from "@/lib/utils/mailLinks";
 import { normalizePhoneForTel } from "@/lib/utils/phone";
 
 // ВРЕМЕННО (самокритичный аудит, 2026-09-06, см. docs/seo.md): текст страницы (в т.ч.
@@ -26,6 +28,25 @@ export default async function ContactsPage(props: PageProps<"/contacts">) {
   const productSlug = typeof productParam === "string" ? productParam : undefined;
   const product = productSlug ? getProductBySlug(productSlug) : undefined;
 
+  // Переход с карточки товара — сразу даём письмо с готовыми темой и телом (Frontend.md,
+  // раздел 8.1): раньше под подсказкой был только общий mailto: без темы/текста, и клиент
+  // сам вспоминал, о каком товаре пишет. model/sku добавляются в тело только если
+  // заполнены у позиции (тот же принцип, что в строке сводки корзины).
+  const productMailLinks = product
+    ? buildMailLinks({
+        to: siteConfig.contacts.email,
+        subject: `Запрос КП: ${product.title}${product.sku ? ` — арт. ${product.sku}` : ""}`,
+        body: [
+          `Здравствуйте! Интересует товар: ${product.title}.`,
+          ...(product.model ? [`Модель: ${product.model}`] : []),
+          ...(product.sku ? [`Артикул: ${product.sku}`] : []),
+          "",
+          "Прошу подготовить коммерческое предложение.",
+          "",
+        ].join("\n"),
+      })
+    : undefined;
+
   return (
     <Container as="main" className="py-10">
       <Breadcrumbs items={[{ label: "Контакты" }]} />
@@ -34,11 +55,14 @@ export default async function ContactsPage(props: PageProps<"/contacts">) {
       <div className="mt-6 max-w-xl">
         <DraftNotice />
 
-        {product && (
-          <p className="mt-4 rounded-2xl border border-brand-800 bg-brand-800/5 px-4 py-3 text-primary">
-            Вы интересуетесь товаром: {product.title}. Пожалуйста, укажите это при обращении к
-            менеджеру.
-          </p>
+        {product && productMailLinks && (
+          <div className="mt-4 flex flex-col items-start gap-3 rounded-2xl border border-brand-800 bg-brand-800/5 px-4 py-3">
+            <p className="text-primary">
+              Вы интересуетесь товаром: {product.title}. Можно написать менеджеру письмом с уже
+              заполненными темой и текстом или связаться по телефону/почте ниже.
+            </p>
+            <MailComposeMenu label="Написать об этом товаре" links={productMailLinks} />
+          </div>
         )}
 
         {/* Контакты — из src/config/site.ts (пока временные заглушки), один источник

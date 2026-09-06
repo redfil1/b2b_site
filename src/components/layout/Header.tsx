@@ -1,9 +1,9 @@
 "use client";
 
-import { Menu, ShoppingCart, X } from "lucide-react";
+import { Menu, Search, ShoppingCart, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { Input } from "@/components/ui/Input";
+import { SearchForm } from "@/components/layout/SearchForm";
 import { siteConfig } from "@/config/site";
 import { useCart } from "@/hooks/useCart";
 
@@ -23,24 +23,12 @@ const NAV_LINKS = [
 const CONTACT_CTA_CLASSNAME =
   "inline-flex items-center justify-center rounded-2xl bg-secondary px-5 py-2.5 text-base font-semibold text-primary transition-colors duration-200 ease-out hover:bg-white";
 
-// Инлайн-поиск (Architecture.md, раздел 2): одно текстовое поле, по сабмиту —
-// обычная GET-навигация на /search?q=<запрос>. Отдельного клиентского фильтра
-// в проекте нет, вся логика поиска — на странице /search.
-function HeaderSearch({ className = "" }: { className?: string }) {
-  return (
-    <form action="/search" role="search" className={className}>
-      <Input
-        type="search"
-        name="q"
-        aria-label="Поиск по каталогу"
-        placeholder="Поиск по каталогу"
-      />
-    </form>
-  );
-}
-
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // Поиск на мобильной ширине раскрывается отдельной иконкой в шапке (Frontend.md,
+  // раздел 8.4) — чтобы к нему был доступ в один тап, а не только внутри гамбургер-меню.
+  // На десктопе поле всегда видно в строке ниже (md:block), этот тоггл там не нужен.
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { count } = useCart();
 
   return (
@@ -74,11 +62,27 @@ export function Header() {
         <div className="flex shrink-0 items-center gap-3">
           {/* Расширено по итогам дизайн-ревью, 2026-09-06: узкое поле (было lg:w-56)
               не помещало длинные артикулы/названия при вводе. */}
-          <HeaderSearch className="hidden w-36 md:block lg:w-72 xl:w-80" />
+          <SearchForm className="hidden w-36 md:block lg:w-72 xl:w-80" />
 
           <Link href="/contacts" className="hidden sm:inline-flex">
             <span className={CONTACT_CTA_CLASSNAME}>Связаться с менеджером</span>
           </Link>
+
+          {/* Тоггл поиска — только на мобильном (md:hidden); открытие поиска закрывает
+              меню, чтобы не показывать два раскрытых блока сразу. */}
+          <button
+            type="button"
+            onClick={() => {
+              setIsSearchOpen((open) => !open);
+              setIsMenuOpen(false);
+            }}
+            aria-expanded={isSearchOpen}
+            aria-controls="mobile-search"
+            aria-label={isSearchOpen ? "Скрыть поиск" : "Показать поиск"}
+            className="inline-flex items-center justify-center rounded-xl p-2 text-white transition-colors duration-200 ease-out hover:bg-white/10 md:hidden"
+          >
+            {isSearchOpen ? <X className="h-6 w-6" /> : <Search className="h-6 w-6" />}
+          </button>
 
           {/* Видна на всех брейкпоинтах, в отличие от поиска/CTA выше (Frontend.md,
               раздел 7.1) — счётчик корзины нужен клиенту как постоянная обратная связь
@@ -103,7 +107,10 @@ export function Header() {
 
           <button
             type="button"
-            onClick={() => setIsMenuOpen((open) => !open)}
+            onClick={() => {
+              setIsMenuOpen((open) => !open);
+              setIsSearchOpen(false);
+            }}
             aria-expanded={isMenuOpen}
             aria-controls="mobile-nav"
             aria-label={isMenuOpen ? "Закрыть меню" : "Открыть меню"}
@@ -114,11 +121,21 @@ export function Header() {
         </div>
       </div>
 
+      {/* Раскрываемая строка поиска на мобильном (Frontend.md, раздел 8.4) — по иконке
+          выше. Условный рендер, без transition: блок короткий, анимация здесь не нужна. */}
+      {isSearchOpen && (
+        <div id="mobile-search" className="px-4 pb-4 md:hidden">
+          <SearchForm />
+        </div>
+      )}
+
       {/* Мобильное меню — сворачивается в гамбургер, переключение через max-height,
           только Tailwind transition (Frontend.md, раздел 4.3.3), без библиотек.
           В закрытом состоянии max-h-0 + overflow-hidden лишь визуально прячут меню,
           поэтому дополнительно снимаем его из дерева доступности и убираем из
-          таба (aria-hidden + inert) — фокус не должен попадать в невидимые ссылки. */}
+          таба (aria-hidden + inert) — фокус не должен попадать в невидимые ссылки.
+          Поле поиска отсюда убрано — оно доступно отдельной иконкой в шапке
+          (Frontend.md, раздел 8.4). */}
       <nav
         id="mobile-nav"
         aria-label="Мобильная навигация"
@@ -129,7 +146,6 @@ export function Header() {
         }`}
       >
         <div className="flex flex-col gap-1 px-4 pb-4 md:px-6">
-          <HeaderSearch className="mb-2" />
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}

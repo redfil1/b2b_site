@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { AddToCartButton } from "@/components/features/product/AddToCartButton";
 import type { Product } from "@/types/product";
@@ -28,7 +29,7 @@ export function ProductQuantityAddToCart({ product }: ProductQuantityAddToCartPr
   const [added, setAdded] = useState(false);
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex flex-wrap items-center gap-3">
       <div className="flex items-center gap-2">
         <button
           type="button"
@@ -70,6 +71,18 @@ export function ProductQuantityAddToCart({ product }: ProductQuantityAddToCartPr
           setAdded(true);
         }}
       />
+      {/* Прямой путь в корзину сразу после добавления (Frontend.md, раздел 8.2) — раньше
+          после «Добавлено» до корзины можно было дойти только через иконку в шапке.
+          Обычная текстовая ссылка (brand-600), не вторая кнопка, чтобы не спорить по
+          весу с CTA. */}
+      {added && (
+        <Link
+          href="/cart"
+          className="text-sm font-medium text-brand-600 underline-offset-2 transition-colors duration-200 ease-out hover:text-brand-800 hover:underline"
+        >
+          Перейти в корзину
+        </Link>
+      )}
     </div>
   );
 }

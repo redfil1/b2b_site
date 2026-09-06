@@ -11,6 +11,7 @@ import { Container } from "@/components/ui/Container";
 import { JsonLd } from "@/components/ui/JsonLd";
 import { ProductGallery } from "@/components/features/product/ProductGallery";
 import { ProductQuantityAddToCart } from "@/components/features/product/ProductQuantityAddToCart";
+import { RecentlyViewedTracker } from "@/components/features/product/RecentlyViewedTracker";
 import { ProductSpecsTable } from "@/components/features/product/ProductSpecsTable";
 import { ProductTabs } from "@/components/features/product/ProductTabs";
 import { siteConfig } from "@/config/site";
@@ -98,6 +99,13 @@ export default async function ProductPage({ params }: PageProps<"/catalog/[categ
       <Container as="main" className="py-10 pb-28 lg:pb-10">
         <JsonLd data={productLd} />
         <JsonLd data={buildBreadcrumbLd(breadcrumbItems)} />
+        {/* Записывает просмотр в localStorage для блока «Вы недавно смотрели» (Frontend.md,
+            раздел 8.7). Ничего не рендерит. */}
+        <RecentlyViewedTracker
+          slug={product.slug}
+          category={product.category}
+          title={product.title}
+        />
         <Breadcrumbs items={breadcrumbItems} />
 
         {/* Раскладка карточки товара — Frontend.md, раздел 4.3.2: lg:grid-cols-[3fr_2fr],
@@ -184,6 +192,13 @@ export default async function ProductPage({ params }: PageProps<"/catalog/[categ
                 <ProductQuantityAddToCart product={product} />
               )}
             </div>
+            {/* Пояснение двух путей обращения (Frontend.md, раздел 8.2) — вторичный текст,
+              не дублируется в sticky-CTA на мобильном (там только основная кнопка). */}
+            <p className="text-sm text-secondary">
+              «{PRODUCT_CONTACT_CTA_LABELS[product.availability]}» — быстрый вопрос по этой позиции.
+              {product.availability === "available" &&
+                " Корзина — если интересует несколько товаров сразу."}
+            </p>
             {/* Второстепенный акцент новой палитрой (Frontend.md, раздел 4.1, аудит 2026-09-05) —
               лёгкий amber-фон привлекает внимание к пояснению, не конкурируя с CTA. */}
             <p className="inline-block self-start rounded-xl bg-accent-amber/10 px-3 py-1.5 text-sm text-secondary">

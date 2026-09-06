@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CategoryIcon } from "@/components/features/catalog/CategoryIcon";
 import { HeroSlider } from "@/components/features/home/HeroSlider";
 import { ManufacturerLogos } from "@/components/features/home/ManufacturerLogos";
+import { RecentlyViewedProducts } from "@/components/features/home/RecentlyViewedProducts";
 import { Container } from "@/components/ui/Container";
 import { getCategories } from "@/lib/data/categories";
 
@@ -81,6 +82,10 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* Блок «Вы недавно смотрели» (Frontend.md, раздел 8.7) — по данным localStorage,
+          сам не рендерится, если список пуст. */}
+      <RecentlyViewedProducts />
     </Container>
   );
 }
