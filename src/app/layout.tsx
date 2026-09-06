@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
+import { CartProvider } from "@/components/layout/CartProvider";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { siteConfig } from "@/config/site";
@@ -41,9 +42,14 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="ru" className={`${manrope.variable} h-full`}>
       <body className="min-h-full flex flex-col font-sans antialiased">
-        <Header />
-        {children}
-        <Footer />
+        {/* CartProvider оборачивает Header (счётчик в шапке, раздел 7.1) и все страницы
+            (кнопки "Добавить в корзину", /cart) — единый источник состояния корзины
+            (Architecture.md, 2.3; Project_Structure.md, "Корзина — React Context"). */}
+        <CartProvider>
+          <Header />
+          {children}
+          <Footer />
+        </CartProvider>
       </body>
     </html>
   );

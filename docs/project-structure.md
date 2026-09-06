@@ -17,6 +17,25 @@
 > `app/search/` и `config/site.ts` уже были в дереве — их назначение уточнено в
 > `Architecture.md` (разделы 2.1–2.2) и `SEO.md`.
 
+> **Изменение от 2026-09-06 (корзина, решено в диалоге с пользователем).** Добавлены:
+> роут `app/cart/`, тип `types/cart.ts`, хук `hooks/useCart.ts`, компонент
+> `components/layout/CartProvider.tsx` и компонент
+> `components/features/product/AddToCartButton.tsx`. Подробности размещения и почему —
+> ниже и в `Architecture.md`, раздел 2.3 / `Frontend.md`, раздел «Корзина».
+
+> **Уточнение при реализации (2026-09-06).** Помимо перечисленного выше, на практике
+> потребовалось два дополнительных файла — не отдельные архитектурные решения, а
+> техническая необходимость: Next.js не допускает `"use client"` вместе с `export const
+> metadata`/`generateMetadata` (или асинхронным серверным компонентом) в одном файле,
+> а состояние корзины/степпера может жить только в клиентском компоненте.
+> - `app/cart/CartPageClient.tsx` — вся интерактивная часть `/cart` (чтение корзины,
+>   редактирование количества, email/копирование); `app/cart/page.tsx` остаётся тонким
+>   серверным компонентом ради `export const metadata` (`robots: { index: false }`).
+> - `components/features/product/ProductQuantityAddToCart.tsx` — степпер количества +
+>   `AddToCartButton` на странице товара (`Frontend.md`, раздел 7.3); вынесен отдельно,
+>   т.к. сама страница товара (`app/catalog/[category]/[slug]/page.tsx`) — асинхронный
+>   серверный компонент (`generateStaticParams`/`generateMetadata`).
+
 ---
 
 ## Структура файлов и папок
@@ -24,7 +43,7 @@
 ```
 src/
 ├── app/
-│   ├── layout.tsx                 — root layout (шрифты, provider'ы, header/footer)
+│   ├── layout.tsx                 — root layout (шрифты, CartProvider, header/footer)
 │   ├── globals.css
 │   ├── page.tsx                   — главная
 │   ├── catalog/
@@ -33,6 +52,10 @@ src/
 │   │       ├── page.tsx
 │   │       └── [slug]/
 │   │           └── page.tsx       — карточка товара (чат "Карточки")
+│   ├── cart/
+│   │   ├── page.tsx               — тонкий серверный компонент (export const metadata,
+│   │   │                             robots noindex — Architecture.md, 2.3)
+│   │   └── CartPageClient.tsx     — вся интерактивная часть, client component
 │   ├── search/
 │   │   └── page.tsx
 │   ├── services/page.tsx
@@ -48,10 +71,18 @@ src/
 │
 ├── components/
 │   ├── ui/                        — кнопки, инпуты, карточки-примитивы, Container (без бизнес-логики)
-│   ├── layout/                    — Header (вкл. инлайн-поиск), Footer, Breadcrumbs
+│   ├── layout/                    — Header (вкл. инлайн-поиск и иконку корзины), Footer,
+│   │                                 Breadcrumbs, CartProvider (контекст корзины, монтируется
+│   │                                 в layout.tsx рядом с Header/Footer — тот же уровень
+│   │                                 «оборачивает всё приложение», Frontend.md, раздел «Корзина»)
 │   └── features/                  — сборные блоки конкретных разделов
 │       ├── catalog/
-│       ├── product/                — компоненты карточки товара
+│       ├── product/                — компоненты карточки товара, AddToCartButton (кнопка
+│       │                              «Добавить в корзину» — только на странице товара,
+│       │                              на карточке ProductGrid не используется, решено
+│       │                              в диалоге с пользователем 2026-09-06), ProductQuantityAddToCart
+│       │                              (степпер количества + AddToCartButton на странице
+│       │                              товара — client component, см. врезку выше)
 │       └── home/                   — HeroSlider, ManufacturerLogos (главная, см. Frontend.md)
 │
 ├── lib/
@@ -67,9 +98,18 @@ src/
 │   │                                   (расширяет Product полем `missingData`, только для lib/data/products.ts —
 │   │                                   служебная пометка не должна попадать в клиентский код, см. Product.md)
 │   ├── category.ts
-│   └── manufacturer.ts
+│   ├── manufacturer.ts
+│   └── cart.ts                       — `CartItem`: снимок товара в корзине (`productSlug`,
+│                                        `category`, `title`, `model?`, `sku?`, `quantity`).
+│                                        Не дублирует `Product` — отдельный, намеренно
+│                                        урезанный тип для localStorage (без
+│                                        specs/images/documents и т.п.), см. правило ниже
 │
 ├── hooks/
+│   └── useCart.ts                    — `useCart()`: `useContext` над контекстом корзины
+│                                        (объявлен и используется здесь, провайдер —
+│                                        components/layout/CartProvider.tsx); сам не хранит
+│                                        state и не трогает localStorage напрямую
 ├── config/
 │   └── site.ts                     — название, meta по умолчанию (вкл. базовый URL для metadataBase, см. SEO.md), соцсети, контакты
 │
@@ -79,5 +119,13 @@ public/
 ## Правила
 - **`components/ui` не знает о данных** — только пропсы и вёрстка. Всё, что дёргает `lib/data`, живёт в `components/features/*` или в `page.tsx`.
 - **`Container` — это `components/ui/Container`** (примитив вёрстки, без данных), не `layout/`. Зафиксировано после внешнего аудита 2026-09-03 (см. `Architecture.md`, 2.2).
-- **Один тип — одно место**: типы `Product`, `Category` объявляются один раз в `types/` и импортируются везде (чаты Карточки/Фронт не заводят дублирующие интерфейсы). `types/request.ts` относился к отменённой форме заявки — не использовать.
+- **Один тип — одно место**: типы `Product`, `Category` объявляются один раз в `types/` и импортируются везде (чаты Карточки/Фронт не заводят дублирующие интерфейсы). `types/request.ts` относился к отменённой форме заявки — не использовать. `types/cart.ts` (`CartItem`) — не нарушение этого правила: он не описывает то же самое, что `Product` (специально урезанный снимок для localStorage, а не альтернативная схема товара), поэтому заведён отдельно, а не переиспользует/расширяет `Product`.
 - Алиас путей `@/*` → `src/*` в `tsconfig.json`, чтобы не было `../../../../`.
+- **Корзина — React Context, а не независимые вызовы хука в каждом компоненте.** Счётчик
+  в `Header`, кнопка `AddToCartButton` на карточках и список на `/cart` должны видеть одно
+  и то же состояние синхронно, без перезагрузки/навигации страницы — если бы каждый компонент
+  независимо читал `localStorage` в свой локальный `useState`, изменение в одном месте не
+  отражалось бы в других до следующего рендера/маунта. Поэтому: единственный источник
+  состояния — `CartProvider` (`components/layout/CartProvider.tsx`, монтируется один раз в
+  `app/layout.tsx`), синхронизирует своё состояние с `localStorage`; `useCart()`
+  (`hooks/useCart.ts`) — это `useContext` поверх него, а не отдельное хранилище.

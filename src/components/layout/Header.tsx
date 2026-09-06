@@ -1,10 +1,11 @@
 "use client";
 
-import { Menu, X } from "lucide-react";
+import { Menu, ShoppingCart, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { Input } from "@/components/ui/Input";
 import { siteConfig } from "@/config/site";
+import { useCart } from "@/hooks/useCart";
 
 // Навигация — статичный список страниц (Architecture.md, раздел 2). Без обращения
 // к lib/data — components/layout только вёрстка (Project_Structure.md).
@@ -40,6 +41,7 @@ function HeaderSearch({ className = "" }: { className?: string }) {
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { count } = useCart();
 
   return (
     // Фиксированная шапка на акцентном цвете brand-800 (Frontend.md, раздел 4.1:
@@ -76,6 +78,27 @@ export function Header() {
 
           <Link href="/contacts" className="hidden sm:inline-flex">
             <span className={CONTACT_CTA_CLASSNAME}>Связаться с менеджером</span>
+          </Link>
+
+          {/* Видна на всех брейкпоинтах, в отличие от поиска/CTA выше (Frontend.md,
+              раздел 7.1) — счётчик корзины нужен клиенту как постоянная обратная связь
+              независимо от ширины экрана. focus-visible, не focus: тот же приём, что и у
+              крестика лайтбокса (ProductGallery.tsx) — иначе на iPhone/Safari обычный тап
+              показывает нативное фокус-кольцо. */}
+          <Link
+            href="/cart"
+            aria-label={count > 0 ? `Корзина, товаров: ${count}` : "Корзина"}
+            className="relative inline-flex items-center justify-center rounded-xl p-2 text-white transition-colors duration-200 ease-out hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-brand-800"
+          >
+            <ShoppingCart className="h-6 w-6" />
+            {count > 0 && (
+              <span
+                aria-hidden="true"
+                className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent-amber px-1 text-xs font-semibold text-white"
+              >
+                {count}
+              </span>
+            )}
           </Link>
 
           <button

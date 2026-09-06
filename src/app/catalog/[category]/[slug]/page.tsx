@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Container } from "@/components/ui/Container";
 import { JsonLd } from "@/components/ui/JsonLd";
 import { ProductGallery } from "@/components/features/product/ProductGallery";
+import { ProductQuantityAddToCart } from "@/components/features/product/ProductQuantityAddToCart";
 import { ProductSpecsTable } from "@/components/features/product/ProductSpecsTable";
 import { ProductTabs } from "@/components/features/product/ProductTabs";
 import { siteConfig } from "@/config/site";
@@ -171,6 +172,11 @@ export default async function ProductPage({ params }: PageProps<"/catalog/[categ
                   {documents.length > 1 ? doc.title : "Скачать PDF"}
                 </a>
               ))}
+              {/* Второй путь обращения к менеджеру — корзина (Frontend.md, раздел 7.3):
+                  несколько товаров сразу, не заменяет основную CTA-ссылку выше.
+                  Степпер количества — в ProductQuantityAddToCart.tsx (там же — почему
+                  это отдельный клиентский компонент, а не прямо здесь). */}
+              <ProductQuantityAddToCart product={product} />
             </div>
             {/* Второстепенный акцент новой палитрой (Frontend.md, раздел 4.1, аудит 2026-09-05) —
               лёгкий amber-фон привлекает внимание к пояснению, не конкурируя с CTA. */}
