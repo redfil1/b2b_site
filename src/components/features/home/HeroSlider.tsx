@@ -106,12 +106,15 @@ export function HeroSlider() {
         ))}
       </div>
 
-      {/* Стрелки и точки — сдержанный стиль, без тяжёлой «карусельной» обвязки. */}
+      {/* Стрелки и точки — сдержанный стиль, без тяжёлой «карусельной» обвязки.
+          Отступ left-4/right-4 и более плотная подложка bg-white/25 + backdrop-blur
+          (2026-09-07, по скринам реального телефона: при bg-white/15 левая стрелка на
+          тёмной части слайда была почти не видна и казалась прижатой к краю). */}
       <button
         type="button"
         onClick={() => goTo(current - 1)}
         aria-label="Предыдущий слайд"
-        className="absolute left-3 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-xl bg-white/15 p-2 text-white transition-colors duration-200 ease-out hover:bg-white/25"
+        className="absolute left-4 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-xl bg-white/25 p-2 text-white backdrop-blur-sm transition-colors duration-200 ease-out hover:bg-white/40"
       >
         <ChevronLeft className="h-5 w-5" />
       </button>
@@ -119,7 +122,7 @@ export function HeroSlider() {
         type="button"
         onClick={() => goTo(current + 1)}
         aria-label="Следующий слайд"
-        className="absolute right-3 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-xl bg-white/15 p-2 text-white transition-colors duration-200 ease-out hover:bg-white/25"
+        className="absolute right-4 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-xl bg-white/25 p-2 text-white backdrop-blur-sm transition-colors duration-200 ease-out hover:bg-white/40"
       >
         <ChevronRight className="h-5 w-5" />
       </button>

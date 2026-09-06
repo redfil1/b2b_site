@@ -58,7 +58,7 @@ export default function CatalogPage() {
                   break-words — подстраховка на случай браузера без словаря переноса
                   для русского, чтобы слово в крайнем случае перенеслось, а не
                   обрезалось молча. */}
-              <h2 className="text-lg font-semibold text-primary break-words hyphens-auto sm:text-2xl">
+              <h2 className="text-base font-semibold text-primary break-words hyphens-auto sm:text-2xl">
                 {category.name}
               </h2>
               {/* line-clamp — чтобы описание не растягивало высоту узкой мобильной
