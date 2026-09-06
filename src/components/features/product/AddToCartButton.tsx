@@ -64,10 +64,16 @@ export function AddToCartButton({
   return (
     <Button
       type="button"
-      variant={variant}
+      // confirm — временный вариант оформления на время показа "Добавлено" (Button.tsx),
+      // чтобы состояние отличалось от обычного вида кнопки не только текстом.
+      variant={justAdded ? "confirm" : variant}
       onClick={handleClick}
       disabled={justAdded}
-      className={className}
+      // disabled:!opacity-100 — перекрывает стандартное disabled:opacity-50 из
+      // buttonClassName (Button.tsx): кнопка задизейблена намеренно (защита от
+      // повторного клика выше), но должна оставаться полностью видимой, а не
+      // приглушённой — иначе цвет confirm (accent-teal) блёкнет и теряет заметность.
+      className={`${className} disabled:!opacity-100`}
     >
       {justAdded ? "Добавлено" : "Добавить в корзину"}
     </Button>
