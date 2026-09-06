@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { CartProvider } from "@/components/layout/CartProvider";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
@@ -50,6 +52,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           {children}
           <Footer />
         </CartProvider>
+        {/* Vercel Analytics/Speed Insights — без cookies и без сбора персональных
+            данных (агрегированные метрики страниц/производительности), решено в
+            диалоге с пользователем, 2026-09-06 — совместимость с ограничением
+            152-ФЗ обоснована в docs/tech-stack.md. Внизу body, а не внутри
+            CartProvider — не относится к состоянию корзины. */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

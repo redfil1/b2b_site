@@ -3,9 +3,13 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container } from "@/components/ui/Container";
 import { DraftNotice } from "@/components/ui/DraftNotice";
 
+// ВРЕМЕННО (самокритичный аудит, 2026-09-06, см. docs/seo.md): текст страницы пока
+// черновой (DraftNotice ниже) — та же логика, что уже применена к /catalog/*
+// (SEO.md, раздел 9): не индексировать, пока не заменён финальным.
 export const metadata: Metadata = {
   title: "Доставка и оплата — B2B-магазин промышленного оборудования",
   description: "Условия доставки и оплаты.",
+  robots: { index: false },
 };
 
 export default function DeliveryPage() {

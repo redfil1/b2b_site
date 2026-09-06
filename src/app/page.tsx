@@ -48,7 +48,11 @@ export default function Home() {
               <div className="flex aspect-square w-full items-center justify-center bg-secondary">
                 {/* На мобильной ширине плитка вдвое уже (2 колонки вместо 1), поэтому
                     иконка внутри пропорционально меньше; с sm: — прежний размер. */}
-                <CategoryIcon slug={category.slug} aria-hidden="true" className="h-14 w-14 sm:h-24 sm:w-24" />
+                <CategoryIcon
+                  slug={category.slug}
+                  aria-hidden="true"
+                  className="h-14 w-14 sm:h-24 sm:w-24"
+                />
               </div>
               <div className="flex flex-1 flex-col gap-3 p-6">
                 {/* text-lg на мобильной ширине (2 колонки) — чтобы длинные однословные
@@ -68,7 +72,9 @@ export default function Home() {
                 {/* line-clamp — чтобы описание не растягивало высоту узкой мобильной
                     плитки (2 колонки); с sm: плитка шире и описание обычно влезает целиком. */}
                 {category.description && (
-                  <p className="text-secondary line-clamp-2 sm:line-clamp-none">{category.description}</p>
+                  <p className="text-secondary line-clamp-2 sm:line-clamp-none">
+                    {category.description}
+                  </p>
                 )}
               </div>
             </Link>

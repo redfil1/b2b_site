@@ -3,9 +3,13 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container } from "@/components/ui/Container";
 import { DraftNotice } from "@/components/ui/DraftNotice";
 
+// ВРЕМЕННО (самокритичный аудит, 2026-09-06, см. docs/seo.md): текст страницы пока
+// черновой (DraftNotice ниже) — та же логика, что уже применена к /catalog/*
+// (SEO.md, раздел 9): не индексировать, пока не заменён финальным.
 export const metadata: Metadata = {
   title: "О компании — B2B-магазин промышленного оборудования",
   description: "Информация о компании: чем занимаемся, с кем и как работаем.",
+  robots: { index: false },
 };
 
 export default function CompanyPage() {

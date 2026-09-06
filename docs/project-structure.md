@@ -91,7 +91,11 @@ src/
 │   │   ├── categories.ts           — функции + сами данные категорий
 │   │   └── manufacturers.ts        — функции + данные производителей (для полосы логотипов на главной)
 │   ├── constants/
+│   │   └── legalDocs.ts             — `LEGAL_DOCS` ({slug, title}[]) + `getLegalDocTitle()`,
+│   │                                   единый источник для app/legal/[doc]/page.tsx и
+│   │                                   app/sitemap.ts (самокритичный аудит, 2026-09-06)
 │   └── utils/
+│       └── phone.ts                 — normalizePhoneForTel() для href="tel:..."
 │
 ├── types/
 │   ├── product.ts                   — `Product` (публичный тип для компонентов) и `ProductDraft`

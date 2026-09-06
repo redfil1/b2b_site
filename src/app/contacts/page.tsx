@@ -6,9 +6,14 @@ import { siteConfig } from "@/config/site";
 import { getProductBySlug } from "@/lib/data/products";
 import { normalizePhoneForTel } from "@/lib/utils/phone";
 
+// ВРЕМЕННО (самокритичный аудит, 2026-09-06, см. docs/seo.md): текст страницы (в т.ч.
+// «юридический адрес и реквизиты» ниже) пока черновой (DraftNotice) — та же логика,
+// что уже применена к /catalog/* (SEO.md, раздел 9): не индексировать, пока не
+// заменён финальным.
 export const metadata: Metadata = {
   title: `Контакты — ${siteConfig.name}`,
   description: "Контактные данные для связи с менеджером.",
+  robots: { index: false },
 };
 
 export default async function ContactsPage(props: PageProps<"/contacts">) {

@@ -5,10 +5,14 @@ import { Container } from "@/components/ui/Container";
 import { DraftNotice } from "@/components/ui/DraftNotice";
 import { siteConfig } from "@/config/site";
 
+// ВРЕМЕННО (самокритичный аудит, 2026-09-06, см. docs/seo.md): текст страницы пока
+// черновой (DraftNotice ниже) — та же логика, что уже применена к /catalog/*
+// (SEO.md, раздел 9): не индексировать, пока не заменён финальным.
 export const metadata: Metadata = {
   title: `Услуги — ${siteConfig.name}`,
   description:
     "Подбор и поставка промышленного оборудования из Китая, консультации по подбору техники.",
+  robots: { index: false },
 };
 
 export default function ServicesPage() {

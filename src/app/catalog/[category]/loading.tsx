@@ -20,12 +20,19 @@ export default function CategoryLoading() {
           {Array.from({ length: 8 }).map((_, index) => (
             <div
               key={index}
-              className="flex h-full flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+              className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
             >
-              <div className="h-6 w-20 rounded-full bg-secondary" />
-              <div className="h-6 w-3/4 rounded bg-secondary" />
-              <div className="h-4 w-1/2 rounded bg-secondary" />
-              <div className="h-16 w-full rounded bg-secondary" />
+              {/* Плейсхолдер под блок иконки категории (CategoryIcon, тот же
+                  aspect-[4/3] bg-secondary, что и в реальной карточке ProductGrid.tsx) —
+                  без него скелетон был короче настоящей карточки и вызывал скачок
+                  вёрстки при подстановке контента (найдено при самокритичном аудите). */}
+              <div className="aspect-[4/3] w-full bg-secondary" />
+              <div className="flex flex-1 flex-col gap-3 p-6">
+                <div className="h-6 w-20 rounded-full bg-secondary" />
+                <div className="h-6 w-3/4 rounded bg-secondary" />
+                <div className="h-4 w-1/2 rounded bg-secondary" />
+                <div className="h-16 w-full rounded bg-secondary" />
+              </div>
             </div>
           ))}
         </div>

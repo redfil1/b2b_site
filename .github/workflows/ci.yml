@@ -1,0 +1,23 @@
+name: CI
+
+# Прогоняет lint → typecheck → build на каждый push и pull request — быстрая
+# проверка до/параллельно с деплоем Vercel, который сам по себе гоняет только
+# `next build`. Тестового фреймворка в проекте нет (docs/coding-rules.md,
+# .claude/agents/tester.md) — отдельного шага для тестов здесь тоже нет.
+on:
+  push:
+  pull_request:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build
