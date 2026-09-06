@@ -38,7 +38,7 @@ export default function Home() {
           название уже есть текстом ниже. */}
       <section className="mt-6 flex flex-col gap-6">
         <h2 className="text-2xl font-semibold text-primary md:text-3xl">Категории каталога</h2>
-        <div className="grid grid-cols-1 items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-2 items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {categories.map((category) => (
             <Link
               key={category.slug}
@@ -46,11 +46,20 @@ export default function Home() {
               className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-transform duration-200 ease-out motion-safe:hover:scale-[1.02]"
             >
               <div className="flex aspect-square w-full items-center justify-center bg-secondary">
-                <CategoryIcon slug={category.slug} aria-hidden="true" className="h-24 w-24" />
+                {/* На мобильной ширине плитка вдвое уже (2 колонки вместо 1), поэтому
+                    иконка внутри пропорционально меньше; с sm: — прежний размер. */}
+                <CategoryIcon slug={category.slug} aria-hidden="true" className="h-14 w-14 sm:h-24 sm:w-24" />
               </div>
               <div className="flex flex-1 flex-col gap-3 p-6">
-                <h3 className="text-xl font-semibold text-primary">{category.name}</h3>
-                {category.description && <p className="text-secondary">{category.description}</p>}
+                {/* text-lg на мобильной ширине (2 колонки) — чтобы длинные однословные
+                    названия («Газоанализаторы») не переносились посередине слова;
+                    с sm: возвращается прежний размер. */}
+                <h3 className="text-lg font-semibold text-primary sm:text-xl">{category.name}</h3>
+                {/* line-clamp — чтобы описание не растягивало высоту узкой мобильной
+                    плитки (2 колонки); с sm: плитка шире и описание обычно влезает целиком. */}
+                {category.description && (
+                  <p className="text-secondary line-clamp-2 sm:line-clamp-none">{category.description}</p>
+                )}
               </div>
             </Link>
           ))}

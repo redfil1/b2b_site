@@ -120,14 +120,20 @@ export function ProductGallery({ title, images }: ProductGalleryProps) {
           не заведены как цвета темы Tailwind (см. globals.css) — это отдельные готовые
           CSS-классы, поэтому модификатор прозрачности (/70) и вариант backdrop: к ним не
           применяются (сгенерировать нечего). Затемнение подложки не анимируем отдельно —
-          фейд/скейл ниже относится к самому содержимому диалога. */}
+          фейд/скейл ниже относится к самому содержимому диалога.
+          overflow-visible — у <dialog> в браузерном UA-стиле по умолчанию overflow: auto,
+          а не visible; это ровно тот «родительский контейнер с фото», который обрезал
+          кнопку закрытия при отрицательном смещении (sm:-top-3/-right-3), т.к. auto
+          устанавливает область прокрутки-обрезки по границе own box диалога (=размер
+          фото). Явно возвращаем visible, чтобы кнопка была видна и кликабельна за
+          пределами этой границы. */}
       <dialog
         ref={dialogRef}
         aria-label={`Увеличенное фото товара «${title}»`}
         onClick={(event) => {
           if (event.target === dialogRef.current) closeLightbox();
         }}
-        className={`m-auto max-w-none border-0 bg-transparent p-0 backdrop:bg-black/70 motion-reduce:transition-none transition-all duration-200 ease-out ${
+        className={`m-auto max-w-none overflow-visible border-0 bg-transparent p-0 backdrop:bg-black/70 motion-reduce:transition-none transition-all duration-200 ease-out ${
           entered ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
       >

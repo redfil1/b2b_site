@@ -83,10 +83,16 @@ export function HeroSlider() {
           >
             {/* Иллюстрация декоративна (сопровождает текст, не несёт своей информации) —
                 aria-hidden, низкая непрозрачность, чтобы не спорить по контрасту с белым
-                текстом слайда. */}
+                текстом слайда. Текст на слайде прижат к низу (justify-end), поэтому на
+                мобильной ширине иллюстрация переезжает в верхний правый угол — заметно
+                меньше и без отрицательных смещений (right-2/top-2 вместо -right-6/-bottom-10),
+                чтобы помещаться в узкий (16:9) слайд целиком и не перекрывать текст внизу;
+                max-w ограничивает самую широкую иллюстрацию (EquipmentIllustration), чтобы
+                она не растягивалась почти на всю ширину слайда. С sm: — прежние размер и
+                положение (нижний правый угол, крупнее). */}
             <slide.Illustration
               aria-hidden="true"
-              className="pointer-events-none absolute -right-6 -bottom-10 h-[85%] w-auto text-white/20 sm:right-4 sm:h-[95%]"
+              className="pointer-events-none absolute top-2 right-2 h-[38%] w-auto max-w-[55%] text-white/20 sm:top-auto sm:-bottom-10 sm:right-4 sm:h-[95%] sm:max-w-none"
             />
             {/* Затемнение под текст — лёгкое, не «тяжёлый тёмный фон» (Frontend.md, 4.1). */}
             <div className="absolute inset-0 bg-brand-800/30" />
