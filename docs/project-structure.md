@@ -36,6 +36,32 @@
 >   т.к. сама страница товара (`app/catalog/[category]/[slug]/page.tsx`) — асинхронный
 >   серверный компонент (`generateStaticParams`/`generateMetadata`).
 
+> **Изменение от 2026-09-06 (продуктовая оценка, подагент `innovator`).** Зафиксировано в
+> `Frontend.md`, раздел 8, и `Architecture.md`, раздел 2. Влияние на структуру:
+> - `components/ui/Textarea.tsx` — новый примитив под необязательное поле «Комментарий» в
+>   сводке `/cart` (`Frontend.md`, раздел 8.3). Раньше не заводился (нужен был только
+>   отменённой форме заявки); `Select` по-прежнему не нужен.
+> - `components/features/home/RecentlyViewedProducts.tsx` — блок «Вы недавно смотрели»
+>   (`Frontend.md`, раздел 8.7): читает `localStorage`, показывает последние N карточек,
+>   переиспользуя элемент `ProductGrid`. Отображается на главной и, при необходимости, на
+>   `/catalog`.
+> - `components/features/product/RecentlyViewedTracker.tsx` — тонкий client-компонент на
+>   странице товара, записывающий факт просмотра в `localStorage`; вынесен отдельным
+>   файлом по той же причине, что `ProductQuantityAddToCart` (страница товара —
+>   асинхронный серверный компонент).
+> - `hooks/useRecentlyViewed.ts` — общая для двух компонентов выше логика чтения/записи
+>   списка в `localStorage` (`useSyncExternalStore` — тот же приём против рассинхрона
+>   серверной и клиентской разметки, что у `useCart`). Отдельного React-контекста, в
+>   отличие от корзины, не требуется — см. правило в конце документа.
+> - Необязательные поля «Компания» / «Город доставки» / «Комментарий» на `/cart` живут
+>   внутри `app/cart/CartPageClient.tsx` (отдельных файлов не требуют) и **не являются
+>   формой сбора данных**: значения только дописываются в текст сводки, никуда не
+>   отправляются и не сохраняются (`Frontend.md`, раздел 8.3; `Architecture.md`,
+>   раздел 2.3).
+> - Поле уточнения запроса на `/search` — клиентский островок внутри `app/search/page.tsx`
+>   (сам роут остаётся серверным); при реализации допустимо выделить общий с инлайн-
+>   поиском шапки компонент формы поиска. Новый обязательный файл здесь не фиксируется.
+
 ---
 
 ## Структура файлов и папок
@@ -70,7 +96,9 @@ src/
 │   └── error.tsx                  — глобальный error boundary, "use client" (Architecture.md, 2.1)
 │
 ├── components/
-│   ├── ui/                        — кнопки, инпуты, карточки-примитивы, Container (без бизнес-логики)
+│   ├── ui/                        — кнопки, инпуты (вкл. Textarea — поле «Комментарий» на
+│   │                                 /cart, Frontend.md 8.3), карточки-примитивы,
+│   │                                 Container (без бизнес-логики)
 │   ├── layout/                    — Header (вкл. инлайн-поиск и иконку корзины), Footer,
 │   │                                 Breadcrumbs, CartProvider (контекст корзины, монтируется
 │   │                                 в layout.tsx рядом с Header/Footer — тот же уровень
@@ -82,8 +110,13 @@ src/
 │       │                              на карточке ProductGrid не используется, решено
 │       │                              в диалоге с пользователем 2026-09-06), ProductQuantityAddToCart
 │       │                              (степпер количества + AddToCartButton на странице
-│       │                              товара — client component, см. врезку выше)
-│       └── home/                   — HeroSlider, ManufacturerLogos (главная, см. Frontend.md)
+│       │                              товара — client component, см. врезку выше),
+│       │                              RecentlyViewedTracker (client-островок, пишет факт
+│       │                              просмотра в localStorage — Frontend.md 8.7)
+│       └── home/                   — HeroSlider, ManufacturerLogos, RecentlyViewedProducts
+│                                     (блок «Вы недавно смотрели» по localStorage —
+│                                     Frontend.md 8.7; также используется на /catalog) —
+│                                     главная, см. Frontend.md
 │
 ├── lib/
 │   ├── data/                       — локальные данные каталога (см. Architecture.md, п.1)
@@ -110,10 +143,13 @@ src/
 │                                        specs/images/documents и т.п.), см. правило ниже
 │
 ├── hooks/
-│   └── useCart.ts                    — `useCart()`: `useContext` над контекстом корзины
-│                                        (объявлен и используется здесь, провайдер —
-│                                        components/layout/CartProvider.tsx); сам не хранит
-│                                        state и не трогает localStorage напрямую
+│   ├── useCart.ts                    — `useCart()`: `useContext` над контекстом корзины
+│   │                                    (объявлен и используется здесь, провайдер —
+│   │                                    components/layout/CartProvider.tsx); сам не хранит
+│   │                                    state и не трогает localStorage напрямую
+│   └── useRecentlyViewed.ts          — чтение/запись списка недавно просмотренных товаров
+│                                        в localStorage (`useSyncExternalStore`); без
+│                                        React-контекста — см. правило ниже (Frontend.md 8.7)
 ├── config/
 │   └── site.ts                     — название, meta по умолчанию (вкл. базовый URL для metadataBase, см. SEO.md), соцсети, контакты
 │
@@ -133,3 +169,12 @@ public/
   состояния — `CartProvider` (`components/layout/CartProvider.tsx`, монтируется один раз в
   `app/layout.tsx`), синхронизирует своё состояние с `localStorage`; `useCart()`
   (`hooks/useCart.ts`) — это `useContext` поверх него, а не отдельное хранилище.
+- **«Недавно просмотренные» — без React-контекста, в отличие от корзины.** Здесь нет
+  требования «несколько смонтированных компонентов видят одно состояние синхронно»:
+  запись идёт только со страницы товара (`RecentlyViewedTracker`), чтение — только на
+  главной/каталоге (`RecentlyViewedProducts`), эти две точки никогда не отрисованы
+  одновременно. Поэтому общего провайдера не заводим — `hooks/useRecentlyViewed.ts`
+  читает/пишет `localStorage` напрямую через `useSyncExternalStore` (тот же приём против
+  рассинхрона серверной и клиентской разметки, что в корзине, но без слоя контекста).
+  Заводить `CartProvider`-подобную обёртку «для симметрии» — лишняя абстракция
+  (`Coding Rules.md`).
