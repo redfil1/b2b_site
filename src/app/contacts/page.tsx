@@ -64,6 +64,7 @@ export default async function ContactsPage(props: PageProps<"/contacts">) {
               заполненными темой и текстом или связаться по телефону/почте ниже.
             </p>
             <MailComposeMenu label="Написать об этом товаре" items={productMailItems} />
+            <p className="text-sm text-secondary">Менеджер отвечает в течение 1 рабочего дня.</p>
           </div>
         )}
 
@@ -99,6 +100,11 @@ export default async function ContactsPage(props: PageProps<"/contacts">) {
             <dd>Будут добавлены позже.</dd>
           </div>
         </dl>
+
+        {/* Ожидание ответа рядом с контактами (Frontend.md, раздел 8.11) — в потоке без
+            подтверждения и без личного кабинета снимает вопрос «дошло ли и когда ответят».
+            Срок — из решения бизнеса. */}
+        <p className="mt-4 text-sm text-secondary">Менеджер отвечает в течение 1 рабочего дня.</p>
       </div>
     </Container>
   );
