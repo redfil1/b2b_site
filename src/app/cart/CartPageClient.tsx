@@ -18,6 +18,10 @@ import type { CartItem } from "@/types/cart";
 // localStorage — в отличие от состава корзины), они лишь дописываются в текст сводки,
 // который клиент сам копирует или отправляет своей почтой (Architecture.md, раздел 2.3).
 interface CartContextFields {
+  /** Имя / телефон / email клиента — чтобы менеджер знал, кому отвечать, когда заявка
+   *  пришла через «Скопировать» или «Отправить себе» (Frontend.md, раздел 8.10). Та же
+   *  логика «не форма», что у остальных полей: не хранится, не отправляется на сервер. */
+  contact: string;
   company: string;
   city: string;
   comment: string;
@@ -38,6 +42,7 @@ function buildCartSummary(
   requestCode: string,
 ): string {
   const contextLines = [
+    context.contact.trim() ? `Как связаться: ${context.contact.trim()}` : "",
     context.company.trim() ? `Компания: ${context.company.trim()}` : "",
     context.city.trim() ? `Город доставки: ${context.city.trim()}` : "",
     context.comment.trim() ? `Комментарий: ${context.comment.trim()}` : "",
@@ -87,14 +92,15 @@ function buildRequestCode(items: CartItem[]): string {
 export function CartPageClient() {
   const { items, removeItem, updateQuantity } = useCart();
   const [copied, setCopied] = useState(false);
+  const [contact, setContact] = useState("");
   const [company, setCompany] = useState("");
   const [city, setCity] = useState("");
   const [comment, setComment] = useState("");
 
   const requestCode = useMemo(() => buildRequestCode(items), [items]);
   const summary = useMemo(
-    () => buildCartSummary(items, { company, city, comment }, requestCode),
-    [items, company, city, comment, requestCode],
+    () => buildCartSummary(items, { contact, company, city, comment }, requestCode),
+    [items, contact, company, city, comment, requestCode],
   );
 
   async function handleCopy() {
@@ -215,6 +221,13 @@ export function CartPageClient() {
           Поля ниже необязательны и никуда не отправляются — они лишь добавляются в текст заявки,
           который вы копируете или отправляете сами.
         </p>
+        {/* «Как с вами связаться» (Frontend.md, раздел 8.10) — отдельной строкой во всю
+            ширину: важнее остальных полей, т.к. при «Скопировать»/«Отправить себе»
+            менеджеру иначе некому ответить. */}
+        <label className="flex flex-col gap-1 text-sm text-secondary">
+          Как с вами связаться (имя, телефон, email)
+          <Input value={contact} onChange={(event) => setContact(event.target.value)} />
+        </label>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="flex flex-col gap-1 text-sm text-secondary">
             Компания

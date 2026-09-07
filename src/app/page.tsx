@@ -15,18 +15,43 @@ export default function Home() {
       <HeroSlider />
 
       {/* Hero — заголовок и краткое УТП. Факты — из CLAUDE.md (описание проекта),
-          без маркетинговых обещаний, которых нет в доках. */}
-      <section className="flex flex-col gap-4 py-6 md:py-10">
+          без маркетинговых обещаний, которых нет в доках. Заголовок сокращён 2026-09-07
+          (Frontend.md, раздел 8.10): прежний «B2B-магазин промышленного оборудования»
+          на мобильном занимал три строки и дословно повторял первый слайд слайдера. */}
+      <section className="flex flex-col items-start gap-4 py-6 md:py-10">
         <h1 className="max-w-3xl text-4xl font-semibold text-primary md:text-5xl">
-          B2B-магазин промышленного оборудования
+          Промышленное оборудование под заказ
         </h1>
         <p className="max-w-2xl text-secondary md:text-lg">
           Поставляем газоанализаторы, КИП, лабораторное оборудование и спецтехнику под заказ из
           Китая. Склада в РФ нет — каждая позиция поставляется под заказ.
         </p>
+        {/* Действие в теле главной (Frontend.md, раздел 8.10) — раньше на первом экране
+            не было ни одной кнопки, кроме шапки. «Каталог» — внутренняя навигация;
+            «Связаться с менеджером» → /contacts, единственный внешний CTA по правилам
+            проекта (CLAUDE.md). */}
+        <div className="mt-2 flex flex-wrap gap-3">
+          <Link
+            href="/catalog"
+            className="inline-flex items-center justify-center rounded-2xl bg-brand-800 px-5 py-2.5 text-base font-semibold text-white transition-colors duration-200 ease-out hover:bg-brand-600"
+          >
+            Перейти в каталог
+          </Link>
+          <Link
+            href="/contacts"
+            className="inline-flex items-center justify-center rounded-2xl border border-brand-800 px-5 py-2.5 text-base font-semibold text-brand-800 transition-colors duration-200 ease-out hover:bg-brand-800/5"
+          >
+            Связаться с менеджером
+          </Link>
+        </div>
       </section>
 
-      {/* Полоса логотипов производителей — Frontend.md, раздел 4.3.4 (не отдельный роут). */}
+      {/* Блок «Вы недавно смотрели» (Frontend.md, разделы 8.7, 8.10) — поднят выше
+          категорий: на мобильном внизу длинной страницы вернувшийся клиент его не
+          долистывал. По данным localStorage, не рендерится при пустом списке. */}
+      <RecentlyViewedProducts />
+
+      {/* Блок «Производители» — Frontend.md, раздел 4.3.4 (не отдельный роут). */}
       <section className="mt-6">
         <ManufacturerLogos />
       </section>
@@ -85,10 +110,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-
-      {/* Блок «Вы недавно смотрели» (Frontend.md, раздел 8.7) — по данным localStorage,
-          сам не рендерится, если список пуст. */}
-      <RecentlyViewedProducts />
     </Container>
   );
 }

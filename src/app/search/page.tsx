@@ -37,15 +37,19 @@ function buildSearchEntries(): SearchEntry[] {
   }));
 }
 
-// threshold 0.35 — середина рекомендованного диапазона: прощает опечатки, но не
-// вытягивает нерелевантное. ignoreLocation — совпадение важно в любом месте строки,
-// а не только в начале. Веса (Frontend.md, раздел 8.4): точное попадание в название/
-// модель весит больше всего; артикул и производитель — средне; описание и категория —
-// меньше всего, чтобы запрос по применению («котельная», «расходомер») находил товар,
-// но не вытеснял совпадения по названию/модели. Fuse суммирует вклад полей с учётом weight.
+// threshold 0.3 — строже прежних 0.35 (ужесточено 2026-09-07, Frontend.md, раздел 8.10):
+// на маленьком каталоге при 0.35 короткие запросы («КИП») вытягивали нечёткие совпадения
+// по обрывкам слов в описании (погрузчик, центрифуга). minMatchCharLength 2 отсекает
+// одно-символьный нечёткий шум, не мешая реальным коротким запросам (модели, «КИП»).
+// ignoreLocation — совпадение важно в любом месте строки, а не только в начале. Веса
+// (Frontend.md, раздел 8.4): точное попадание в название/модель весит больше всего;
+// артикул и производитель — средне; описание и категория — меньше всего, чтобы запрос по
+// применению («котельная», «расходомер») находил товар, но не вытеснял совпадения по
+// названию/модели. Fuse суммирует вклад полей с учётом weight.
 const FUSE_OPTIONS: IFuseOptions<SearchEntry> = {
-  threshold: 0.35,
+  threshold: 0.3,
   ignoreLocation: true,
+  minMatchCharLength: 2,
   keys: [
     { name: "title", weight: 0.5 },
     { name: "model", weight: 0.25 },
@@ -95,12 +99,30 @@ export default async function SearchPage(props: PageProps<"/search">) {
           <p className="text-secondary">
             По запросу «{query}» ничего не найдено. Попробуйте изменить формулировку.
           </p>
-          <Link
-            href="/catalog"
-            className="inline-flex items-center justify-center rounded-2xl border border-brand-800 px-5 py-2.5 text-base font-semibold text-brand-800 transition-colors duration-200 ease-out hover:bg-brand-800/5"
-          >
-            Перейти в каталог
-          </Link>
+          {/* Нулевой результат — момент максимального намерения (Frontend.md, раздел 8.10):
+              не сливаем клиента в общий каталог, а предлагаем описать задачу менеджеру.
+              Тот же спокойный блок, что внизу /catalog (раздел 8.8). */}
+          <div className="mt-2 w-full rounded-2xl border border-gray-200 bg-secondary p-6">
+            <h2 className="text-xl font-semibold text-primary">Не нашли нужное?</h2>
+            <p className="mt-2 max-w-2xl text-secondary">
+              Каталог — примеры оборудования, которое мы поставляем. Опишите требуемые
+              характеристики, и менеджер подберёт и привезёт подходящую позицию под заказ.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Link
+                href="/contacts"
+                className="inline-flex items-center justify-center rounded-2xl bg-brand-800 px-5 py-2.5 text-base font-semibold text-white transition-colors duration-200 ease-out hover:bg-brand-600"
+              >
+                Связаться с менеджером
+              </Link>
+              <Link
+                href="/catalog"
+                className="inline-flex items-center justify-center rounded-2xl border border-brand-800 px-5 py-2.5 text-base font-semibold text-brand-800 transition-colors duration-200 ease-out hover:bg-brand-800/5"
+              >
+                Перейти в каталог
+              </Link>
+            </div>
+          </div>
         </div>
       )}
     </Container>
