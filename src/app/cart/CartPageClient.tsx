@@ -10,7 +10,7 @@ import { MailComposeMenu } from "@/components/ui/MailComposeMenu";
 import { Textarea } from "@/components/ui/Textarea";
 import { siteConfig } from "@/config/site";
 import { useCart } from "@/hooks/useCart";
-import { buildMailLinks } from "@/lib/utils/mailLinks";
+import { buildMailLinks, buildMailMenuItems } from "@/lib/utils/mailLinks";
 import type { CartItem } from "@/types/cart";
 
 // Необязательные поля контекста над кнопками (Frontend.md, раздел 8.3). Это НЕ форма
@@ -23,11 +23,15 @@ interface CartContextFields {
   comment: string;
 }
 
-// Текстовая сводка корзины — используется в теле письма (mailto:/Gmail/Outlook), при
-// копировании и в Web Share (Frontend.md, разделы 7.4, 8.3, 8.6), поэтому одна функция
-// форматирует текст одинаково для всех способов. Отдельный файл/тип под неё не заводится
-// — переиспользования вне /cart нет (Project_Structure.md, правило против абстракций без
-// необходимости).
+// Текстовая сводка корзины — используется во всех способах отправки (веб-почта, mailto:,
+// «Отправить себе», буфер обмена), поэтому одна функция форматирует текст одинаково
+// (Frontend.md, разделы 7.4, 8.3, 8.6). Отдельный файл/тип под неё не заводится —
+// переиспользования вне /cart нет.
+//
+// Первая строка — «Кому: <почта менеджера>» (Frontend.md, раздел 7.4, 2026-09-07): при
+// «Скопировать» и «Отправить себе» адреса получателя в самом канале нет, поэтому он едет
+// вместе с текстом. Дальше — «Заявка [код]» (раздел 8.6), блок необязательных полей
+// контекста, если заполнены (раздел 8.3), затем позиции.
 function buildCartSummary(
   items: CartItem[],
   context: CartContextFields,
@@ -48,6 +52,7 @@ function buildCartSummary(
   });
 
   return [
+    `Кому: ${siteConfig.contacts.email}`,
     `Заявка [${requestCode}]`,
     "",
     ...contextLines,
@@ -82,7 +87,6 @@ function buildRequestCode(items: CartItem[]): string {
 export function CartPageClient() {
   const { items, removeItem, updateQuantity } = useCart();
   const [copied, setCopied] = useState(false);
-  const [shared, setShared] = useState(false);
   const [company, setCompany] = useState("");
   const [city, setCity] = useState("");
   const [comment, setComment] = useState("");
@@ -93,14 +97,6 @@ export function CartPageClient() {
     [items, company, city, comment, requestCode],
   );
 
-  // Поддержка Web Share API проверяется прямо в теле рендера, без useState+useEffect:
-  // эта ветка компонента (return ниже, после раннего возврата для пустой корзины)
-  // на самом первом клиентском рендере (гидратация) всё равно не показывается —
-  // useCart() отдаёт EMPTY_ITEMS на гидратации (CartProvider.tsx, useSyncExternalStore
-  // с getServerSnapshot), поэтому здесь мы уже гарантированно не в проходе гидратации,
-  // и обычная проверка не создаёт риска несовпадения с серверной разметкой.
-  const canShare = typeof navigator !== "undefined" && typeof navigator.share === "function";
-
   async function handleCopy() {
     try {
       await navigator.clipboard.writeText(summary);
@@ -109,19 +105,6 @@ export function CartPageClient() {
     } catch {
       // Clipboard API недоступен (нет разрешения/небезопасный контекст) — тихо
       // игнорируем, у клиента остаётся кнопка "Отправить на email" как альтернатива.
-    }
-  }
-
-  async function handleShare() {
-    try {
-      await navigator.share({ title: `Заявка ${requestCode}`, text: summary });
-      setShared(true);
-      window.setTimeout(() => setShared(false), 1500);
-    } catch {
-      // Пользователь закрыл системное меню "Выбрать способ отправки" без выбора
-      // приложения (AbortError) — это штатная отмена, а не ошибка, поэтому молча ничего не
-      // делаем; кнопка остаётся в обычном виде, остальные способы (email/буфер
-      // обмена) никуда не делись.
     }
   }
 
@@ -136,20 +119,25 @@ export function CartPageClient() {
     );
   }
 
-  // Наборы ссылок «открыть письмо в …» (Frontend.md, разделы 7.4, 8.6) — одинаковый
-  // формат URL для менеджера и для варианта «себе», строится в lib/utils/mailLinks.ts.
-  // Код заявки — в теме всех вариантов (в т.ч. Web Share выше через title/text).
-  const managerLinks = buildMailLinks({
-    to: siteConfig.contacts.email,
-    subject: `Запрос по товарам [${requestCode}] — ${siteConfig.name}`,
-    body: summary,
-  });
-  // Вариант «Отправить себе»: получателя нет — клиент вписывает свой адрес сам.
-  const selfLinks = buildMailLinks({
-    to: "",
-    subject: `Моя заявка [${requestCode}] — ${siteConfig.name}`,
-    body: summary,
-  });
+  // Пункты меню «отправить письмом» (Frontend.md, раздел 7.4) — российские сервисы
+  // вперёд, строятся в lib/utils/mailLinks.ts. Код заявки — в теме всех вариантов.
+  const managerMailItems = buildMailMenuItems(
+    buildMailLinks({
+      to: siteConfig.contacts.email,
+      subject: `Запрос по товарам [${requestCode}] — ${siteConfig.name}`,
+      body: summary,
+    }),
+  );
+  // Вариант «Отправить себе»: получателя нет — клиент вписывает свой адрес сам,
+  // последний пункт назван «Почтовая программа».
+  const selfMailItems = buildMailMenuItems(
+    buildMailLinks({
+      to: "",
+      subject: `Моя заявка [${requestCode}] — ${siteConfig.name}`,
+      body: summary,
+    }),
+    "Почтовая программа",
+  );
 
   return (
     <div className="mt-8 flex flex-col gap-8">
@@ -251,60 +239,43 @@ export function CartPageClient() {
         </label>
       </div>
 
-      {/* Текстовый блок сводки на странице убран — дублировал список товаров выше
-          (был виден как отдельная "Сводка для менеджера"). summary как строка
-          остаётся: используется в теле письма (mailto:/Gmail/Outlook), в Web Share и
-          при копировании ниже — просто больше не рендерится сам по себе. */}
+      {/* Текст сводки сам по себе на странице не рендерится (дублировал бы список выше);
+          `summary` как строка используется во всех способах отправки и при копировании. */}
       <div className="flex flex-col gap-2">
-        {/* Короткий поясняющий текст (сокращён 2026-09-07 по скринам реального телефона —
-            прежний абзац занимал 8 строк на мобильном). Тема письма несёт код заявки
-            [{requestCode}] — по нему удобно сослаться на заявку в разговоре с менеджером. */}
+        {/* Короткий поясняющий текст (Web Share убран 2026-09-07 — не адресовал письмо
+            менеджеру, Frontend.md 7.4; тогда же меню почты пересобрано RU-first). */}
         <p className="text-sm text-secondary">
-          Выберите способ отправки. Если ни один не подошёл — нажмите «Скопировать» и отправьте
-          текст сами. Тема письма содержит код заявки{" "}
+          Отправьте заявку менеджеру одной из кнопок ниже. Если ни один сервис не подошёл — нажмите
+          «Скопировать» и отправьте текст сами. Тема письма содержит код заявки{" "}
           <span className="tabular-nums text-primary">[{requestCode}]</span> — по нему удобно
           сослаться на эту заявку в разговоре с менеджером.
+        </p>
+        {/* Видимая строка с адресом менеджера (Frontend.md, раздел 7.4) — страховка на
+            случай, если пункт меню не сработал или нужного сервиса в списке нет. */}
+        <p className="text-sm text-secondary">
+          Письмо уходит на{" "}
+          <span className="font-medium text-primary">{siteConfig.contacts.email}</span>
         </p>
         {/* На мобильном действия идут в столбик во всю ширину (кнопки-крохи вразнобой
             плохо читались — скрины реального телефона, 2026-09-07); с sm: — прежний
             ряд с переносом. */}
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start">
-          {/* Web Share API — самый удобный вариант, когда браузер его поддерживает
-              (мобильные Safari/Chrome, часть десктопных Chromium — не Firefox
-              десктоп), поэтому забирает себе роль основной кнопки (variant primary),
-              а "Отправить на email" ниже уступает ей и становится outline. Без
-              поддержки (navigator.share нет) кнопка не рендерится вовсе — canShare
-              проверяется один раз при рендере, см. комментарий выше. confirm — тот
-              же приём кратковременной обратной связи, что у "Скопировано"/"Добавлено". */}
-          {canShare && (
-            <Button
-              type="button"
-              variant={shared ? "confirm" : "primary"}
-              onClick={handleShare}
-              className="w-full sm:w-auto"
-            >
-              {shared ? "Отправлено" : "Выбрать способ отправки"}
-            </Button>
-          )}
           {/* Меню выбора почтового сервиса — презентационный MailComposeMenu
               (components/ui): нативный <details>/<summary> без JS-состояния
-              (Frontend.md, раздел 7.4). primary, если "Выбрать способ отправки" не
-              показана (тогда это основное действие), иначе outline. */}
+              (Frontend.md, раздел 7.4). Основная кнопка отправки — variant primary. */}
           <MailComposeMenu
             label="Отправить на email"
-            links={managerLinks}
-            variant={canShare ? "outline" : "primary"}
+            items={managerMailItems}
+            variant="primary"
             className="w-full sm:w-auto"
             summaryClassName="w-full sm:w-auto"
           />
           {/* «Отправить себе» (Frontend.md, раздел 8.6) — тем же меню, второстепенное
-              действие (outline); последний пункт назван «Почтовая программа», т.к.
-              адреса получателя нет. */}
+              действие (outline). */}
           <MailComposeMenu
             label="Отправить себе"
-            links={selfLinks}
+            items={selfMailItems}
             variant="outline"
-            fallbackLabel="Почтовая программа"
             className="w-full sm:w-auto"
             summaryClassName="w-full sm:w-auto"
           />
