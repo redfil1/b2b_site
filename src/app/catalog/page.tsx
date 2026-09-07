@@ -37,7 +37,10 @@ export default function CatalogPage() {
             href={`/catalog/${category.slug}`}
             className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-transform duration-200 ease-out motion-safe:hover:scale-[1.02]"
           >
-            <div className="flex aspect-square w-full items-center justify-center bg-secondary">
+            {/* aspect-[4/3] на мобильном (было square на всех ширинах) — чтобы все
+                четыре плитки категорий комфортно ложились в первый экран телефона
+                (оценка innovator); с sm: — прежний квадрат. */}
+            <div className="flex aspect-[4/3] w-full items-center justify-center bg-secondary sm:aspect-square">
               {/* На мобильной ширине плитка вдвое уже (2 колонки вместо 1), поэтому
                   иконка внутри пропорционально меньше; с sm: — прежний размер. */}
               <CategoryIcon

@@ -46,7 +46,10 @@ export function ProductGallery({ title, images }: ProductGalleryProps) {
       <div
         role="img"
         aria-label={`Фото товара «${title}» пока недоступно`}
-        className="flex aspect-[4/3] w-full items-center justify-center rounded-2xl border border-gray-200 bg-secondary text-secondary"
+        // aspect-[16/9] на мобильном (было [4/3] на всех ширинах) — квадратный/[4/3]
+        // блок без фото съедал ~половину первого экрана телефона и отжимал факты о
+        // товаре и кнопки под сгиб (оценка innovator). С sm: — прежние [4/3].
+        className="flex aspect-[16/9] w-full items-center justify-center rounded-2xl border border-gray-200 bg-secondary text-secondary sm:aspect-[4/3]"
       >
         Фото появится позже
       </div>
@@ -75,7 +78,12 @@ export function ProductGallery({ title, images }: ProductGalleryProps) {
         type="button"
         onClick={() => openLightbox(active)}
         aria-label={`Увеличить фото товара «${title}»`}
-        className="relative aspect-[4/3] w-full cursor-zoom-in overflow-hidden rounded-2xl border border-gray-200 bg-secondary"
+        // aspect-[16/9] на мобильном (было [4/3] на всех ширинах) — пока у товаров нет
+        // реальных фото, только сгенерированные заглушки на светлом фоне; крупный блок
+        // отжимал факты и кнопки под сгиб на телефоне (оценка innovator). object-contain
+        // ниже вписывает изображение без обрезки, так что более низкий блок его не режет.
+        // С sm: — прежние [4/3]; лайтбокс открывает изображение в [4/3] в любом случае.
+        className="relative aspect-[16/9] w-full cursor-zoom-in overflow-hidden rounded-2xl border border-gray-200 bg-secondary sm:aspect-[4/3]"
       >
         <Image
           src={images[active]}

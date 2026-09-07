@@ -26,11 +26,14 @@ export function ProductGrid({ products }: ProductGridProps) {
           // главной/странице категории, вместо голого текста без иконки.
           className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-transform duration-200 ease-out motion-safe:hover:scale-[1.02]"
         >
-          {/* aspect-[2/1] на мобильном (было [4/3] на всех ширинах) — при карточке во
-              всю ширину экрана иконочная область-плейсхолдер занимала ~260px и делала
-              список очень длинным (скрины реального телефона, 2026-09-07). С sm: карточка
-              в 2+ колонки — прежние пропорции. */}
-          <div className="flex aspect-[2/1] w-full items-center justify-center bg-secondary sm:aspect-[4/3]">
+          {/* aspect-[5/2] на мобильном (было [4/3] на всех ширинах, затем [2/1]) — при
+              карточке во всю ширину экрана иконочная область-плейсхолдер занимала слишком
+              много первого экрана (оценка innovator по скринам телефона: под [2/1] всё
+              ещё ~115px пустоты вокруг иконки h-16). ~143px достаточно под иконку с
+              воздухом. С sm: карточка в 2+ колонки — прежние [4/3]; когда появятся
+              реальные фото товаров, вернуть [4/3] и на мобильном (фото несёт смысл и
+              заслуживает площади). */}
+          <div className="flex aspect-[5/2] w-full items-center justify-center bg-secondary sm:aspect-[4/3]">
             <CategoryIcon slug={product.category} aria-hidden="true" className="h-16 w-16" />
           </div>
           <div className="flex flex-1 flex-col gap-3 p-6">
