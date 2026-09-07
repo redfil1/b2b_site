@@ -113,16 +113,16 @@ src/
 │       │                              товара — client component, см. врезку выше),
 │       │                              RecentlyViewedTracker (client-островок, пишет факт
 │       │                              просмотра в localStorage — Frontend.md 8.7)
-│       └── home/                   — HeroSlider, ManufacturerLogos, RecentlyViewedProducts
-│                                     (блок «Вы недавно смотрели» по localStorage —
-│                                     Frontend.md 8.7; также используется на /catalog) —
-│                                     главная, см. Frontend.md
+│       └── home/                   — HeroSlider; RecentlyViewedProducts (блок «Вы недавно
+│                                     смотрели» по localStorage — Frontend.md 8.7; также
+│                                     используется на /catalog). ManufacturerLogos удалён
+│                                     2026-09-07 — блок производителей убран (Frontend.md 4.3.4)
 │
 ├── lib/
 │   ├── data/                       — локальные данные каталога (см. Architecture.md, п.1)
 │   │   ├── products.ts             — функции + сами данные товаров
 │   │   ├── categories.ts           — функции + сами данные категорий
-│   │   └── manufacturers.ts        — функции + данные производителей (для полосы логотипов на главной)
+│   │   └── manufacturers.ts        — данные производителей + getManufacturer() (имя на карточке товара, ключ поиска)
 │   ├── constants/
 │   │   └── legalDocs.ts             — `LEGAL_DOCS` ({slug, title}[]) + `getLegalDocTitle()`,
 │   │                                   единый источник для app/legal/[doc]/page.tsx и

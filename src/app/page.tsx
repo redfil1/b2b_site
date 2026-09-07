@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { CategoryIcon } from "@/components/features/catalog/CategoryIcon";
 import { HeroSlider } from "@/components/features/home/HeroSlider";
-import { ManufacturerLogos } from "@/components/features/home/ManufacturerLogos";
 import { RecentlyViewedProducts } from "@/components/features/home/RecentlyViewedProducts";
 import { Container } from "@/components/ui/Container";
 import { getCategories } from "@/lib/data/categories";
@@ -51,10 +50,10 @@ export default function Home() {
           долистывал. По данным localStorage, не рендерится при пустом списке. */}
       <RecentlyViewedProducts />
 
-      {/* Блок «Производители» — Frontend.md, раздел 4.3.4 (не отдельный роут). */}
-      <section className="mt-6">
-        <ManufacturerLogos />
-      </section>
+      {/* Блок «Производители» убран 2026-09-07 (Frontend.md, раздел 8.10): реальных
+          логотипов нет, а список названий на главной ценности не давал. Данные
+          lib/data/manufacturers.ts остаются — используются для имени производителя на
+          карточке товара и как ключ поиска. Вернуть блок — новое решение. */}
 
       {/* Обзор категорий каталога — Architecture.md, раздел "Структура страниц":
           категория обязательна у товара, здесь — вход в каталог по категориям.
