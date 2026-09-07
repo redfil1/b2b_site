@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Локальные референсные скриншоты (не часть проекта)
+скрины мобильного/
