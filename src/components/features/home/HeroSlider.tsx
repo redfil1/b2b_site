@@ -106,15 +106,16 @@ export function HeroSlider() {
         ))}
       </div>
 
-      {/* Стрелки и точки — сдержанный стиль, без тяжёлой «карусельной» обвязки.
-          Отступ left-4/right-4 и более плотная подложка bg-white/25 + backdrop-blur
-          (2026-09-07, по скринам реального телефона: при bg-white/15 левая стрелка на
-          тёмной части слайда была почти не видна и казалась прижатой к краю). */}
+      {/* Стрелки скрыты на мобильном (`hidden sm:inline-flex`): на узком слайде
+          (aspect-[16/9]) заголовок в 3 строки прижат к низу и наезжал на стрелки по
+          вертикальному центру (скрин реального телефона, 2026-09-07). На мобильном
+          навигация — точки ниже (плюс автопрокрутка). Отступ left-4/right-4 и подложка
+          bg-white/25 + backdrop-blur — с прошлой правки того же дня. */}
       <button
         type="button"
         onClick={() => goTo(current - 1)}
         aria-label="Предыдущий слайд"
-        className="absolute left-4 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-xl bg-white/25 p-2 text-white backdrop-blur-sm transition-colors duration-200 ease-out hover:bg-white/40"
+        className="absolute left-4 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-xl bg-white/25 p-2 text-white backdrop-blur-sm transition-colors duration-200 ease-out hover:bg-white/40 sm:inline-flex"
       >
         <ChevronLeft className="h-5 w-5" />
       </button>
@@ -122,12 +123,15 @@ export function HeroSlider() {
         type="button"
         onClick={() => goTo(current + 1)}
         aria-label="Следующий слайд"
-        className="absolute right-4 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-xl bg-white/25 p-2 text-white backdrop-blur-sm transition-colors duration-200 ease-out hover:bg-white/40"
+        className="absolute right-4 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-xl bg-white/25 p-2 text-white backdrop-blur-sm transition-colors duration-200 ease-out hover:bg-white/40 sm:inline-flex"
       >
         <ChevronRight className="h-5 w-5" />
       </button>
 
-      <div className="absolute inset-x-0 bottom-3 flex justify-center gap-2">
+      {/* Точки — на мобильном единственный ручной способ переключения (стрелки скрыты),
+          поэтому у кнопки увеличенная зона нажатия (py-2) при том же визуальном размере
+          полоски-индикатора во вложенном <span>. */}
+      <div className="absolute inset-x-0 bottom-1 flex justify-center gap-1">
         {SLIDES.map((slide, index) => (
           <button
             key={slide.id}
@@ -135,10 +139,14 @@ export function HeroSlider() {
             onClick={() => goTo(index)}
             aria-label={`Слайд ${index + 1}`}
             aria-current={index === current}
-            className={`h-2 rounded-full transition-all duration-200 ease-out motion-reduce:transition-none ${
-              index === current ? "w-6 bg-white" : "w-2 bg-white/50 hover:bg-white/75"
-            }`}
-          />
+            className="flex items-center justify-center px-1.5 py-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+          >
+            <span
+              className={`block h-2 rounded-full transition-all duration-200 ease-out motion-reduce:transition-none ${
+                index === current ? "w-6 bg-white" : "w-2 bg-white/50 hover:bg-white/75"
+              }`}
+            />
+          </button>
         ))}
       </div>
     </section>
