@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container } from "@/components/ui/Container";
+import { getProducts } from "@/lib/data/products";
 import { CartPageClient } from "./CartPageClient";
 
 // Не индексируется постоянно (в отличие от временного noindex каталога, снятого 2026-10-18) —
@@ -21,7 +22,11 @@ export default function CartPage() {
     <Container as="main" className="py-10">
       <Breadcrumbs items={[{ label: "Корзина" }]} />
       <h1 className="mt-4 text-4xl font-semibold text-primary md:text-5xl">Корзина</h1>
-      <CartPageClient />
+      {/* Только пути «category/slug», не сам каталог — чтобы корзина отличала позиции,
+          которых больше нет в каталоге (Frontend.md, раздел 11). */}
+      <CartPageClient
+        knownPaths={getProducts().map((product) => `${product.category}/${product.slug}`)}
+      />
     </Container>
   );
 }

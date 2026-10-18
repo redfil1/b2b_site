@@ -16,8 +16,9 @@ const SLIDES = [
   {
     id: "equipment",
     Illustration: EquipmentIllustration,
-    title: "Контрольно-измерительное оборудование",
-    subtitle: "Осциллографы, анализаторы спектра и цепей, генераторы сигналов под заказ из Китая",
+    // Не повторяет H1 главной «Измерительные приборы под заказ» (Frontend.md, раздел 11).
+    title: "Осциллографы, анализаторы, генераторы",
+    subtitle: "Tektronix, Keysight, Rohde & Schwarz, Yokogawa, UNI-T, Ceyear — под заказ из Китая",
     tone: "bg-brand-800",
   },
   {

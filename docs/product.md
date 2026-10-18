@@ -244,7 +244,7 @@
   вводило бы клиента в заблуждение. Все позиции — `availability: 'available'`.
 - **Перенос полей:** `brand` → `manufacturer` (slug в `lib/data/manufacturers.ts`),
   `specs[].name` → `specs[].label`, `brochure` → `documents` (одна запись
-  «Брошюра (PDF)»), `images` → `public/images/products/{slug}/`, `id` = `slug`.
+  «Лист характеристик (PDF, 1 стр., N МБ)» — переименовано 2026-10-18, `Frontend.md`, раздел 11), `images` → `public/images/products/{slug}/`, `id` = `slug`.
 - **Нет в исходных данных:** `deliveryTime` → ровно `"уточняется по заявке"` (раздел 2.1);
   `country` (страна производства ≠ страна бренда) не заполняется и уходит в
   `missingData`; `sku`, `package` — не заполняются.
