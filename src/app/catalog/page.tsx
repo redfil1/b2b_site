@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
+import { siteConfig } from "@/config/site";
 import Image from "next/image";
 import Link from "next/link";
 import { RecentlyViewedProducts } from "@/components/features/home/RecentlyViewedProducts";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container } from "@/components/ui/Container";
 import { getCategories } from "@/lib/data/categories";
+import { getProductCards } from "@/lib/data/products";
 
 // Временный noindex каталога снят 2026-10-18 — каталог наполнен реальными данными
 // поставщика (docs/seo.md, раздел 9).
 export const metadata: Metadata = {
-  title: "Каталог — B2B-магазин контрольно-измерительного оборудования",
+  title: `Каталог — ${siteConfig.name}`,
   description:
     "Осциллографы, анализаторы спектра и цепей, генераторы сигналов и другое контрольно-измерительное оборудование под заказ.",
 };
@@ -52,7 +54,7 @@ export default function CatalogPage() {
               )}
             </div>
             <div className="flex flex-1 flex-col gap-3 p-6">
-              {/* text-lg на мобильной ширине (2 колонки) — чтобы длинные однословные
+              {/* text-base на мобильной ширине (2 колонки) — чтобы длинные однословные
                   названия («Прецизионные») не переносились посередине слова;
                   с sm: возвращается прежний размер. Даже так самые длинные слова не
                   всегда влезают в одну строку на самой узкой ширине (~150px минус
@@ -81,7 +83,7 @@ export default function CatalogPage() {
       {/* Блок «Вы недавно смотрели» (Frontend.md, разделы 8.7, 8.10) — над блоком
           «не нашли модель», а не в самом низу страницы. Не рендерится при пустом
           списке localStorage. */}
-      <RecentlyViewedProducts />
+      <RecentlyViewedProducts products={getProductCards()} />
 
       {/* Каталог — витрина-пример возможностей, не полный прайс: реальный ассортимент
           шире того, что заведено в локальных данных (Frontend.md, раздел 8.8;

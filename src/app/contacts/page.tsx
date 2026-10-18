@@ -9,9 +9,9 @@ import { buildMailLinks, buildMailMenuItems } from "@/lib/utils/mailLinks";
 import { normalizePhoneForTel } from "@/lib/utils/phone";
 
 // ВРЕМЕННО (самокритичный аудит, 2026-09-06, см. docs/seo.md): текст страницы (в т.ч.
-// «юридический адрес и реквизиты» ниже) пока черновой (DraftNotice) — та же логика,
-// что уже применена к /catalog/* (SEO.md, раздел 9): не индексировать, пока не
-// заменён финальным.
+// «юридический адрес и реквизиты» ниже) пока черновой (DraftNotice) — не индексировать,
+// пока не заменён финальным (SEO.md, раздел 9.1; та же мера раньше стояла на /catalog/*,
+// снята 2026-10-18).
 export const metadata: Metadata = {
   title: `Контакты — ${siteConfig.name}`,
   description: "Контактные данные для связи с менеджером.",

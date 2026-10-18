@@ -46,10 +46,9 @@ export function ProductGallery({ title, images }: ProductGalleryProps) {
       <div
         role="img"
         aria-label={`Фото товара «${title}» пока недоступно`}
-        // aspect-[16/9] на мобильном (было [4/3] на всех ширинах) — квадратный/[4/3]
-        // блок без фото съедал ~половину первого экрана телефона и отжимал факты о
-        // товаре и кнопки под сгиб (оценка innovator). С sm: — прежние [4/3].
-        className="flex aspect-[16/9] w-full items-center justify-center rounded-2xl border border-gray-200 bg-secondary text-secondary sm:aspect-[4/3]"
+        // aspect-[4/3] на всех ширинах — как основное фото и карточка в сетке
+        // (Frontend.md, разделы 9, 10); временное [16/9] на мобильном снято.
+        className="flex aspect-[4/3] w-full items-center justify-center rounded-2xl border border-gray-200 bg-secondary text-secondary"
       >
         Фото появится позже
       </div>
@@ -87,7 +86,7 @@ export function ProductGallery({ title, images }: ProductGalleryProps) {
           src={images[active]}
           alt={title}
           fill
-          priority
+          preload
           sizes="(max-width: 1024px) 100vw, 60vw"
           className="object-contain"
         />

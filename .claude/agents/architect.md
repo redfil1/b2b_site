@@ -24,7 +24,7 @@ TypeScript + Tailwind, деплой на Vercel, без бэкенда — ка�
 |---|---|
 | `docs/architecture.md` | роутинг (App Router), источник данных каталога, разделение страниц |
 | `docs/project-structure.md` | точная структура файлов/папок `src/`, куда класть что |
-| `docs/tech-stack.md` | стек, деплой на Vercel, переменные окружения, Vercel Blob (PDF-паспорта) |
+| `docs/tech-stack.md` | стек, деплой на Vercel, переменные окружения, хранение брошюр (`public/brochures/`) |
 | `docs/coding-rules.md` | стиль кода, обработка ошибок, требования к комментариям |
 | `docs/product.md` | структура `Product`/`ProductDraft`, правила заполнения карточки (`types/product.ts`) |
 | `docs/frontend.md` | дизайн-система (цвет/типографика/сетка), структура компонентов `ui`/`layout`/`features` |

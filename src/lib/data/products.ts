@@ -1,4 +1,4 @@
-import type { Product, ProductDraft } from "@/types/product";
+import type { Product, ProductCardData, ProductDraft } from "@/types/product";
 
 // Реальный каталог поставщика, загружен 2026-10-18 (Product.md, раздел 7) из архива
 // «Брошюры_оборудование» (catalog.json + фото + PDF-брошюры). Правила переноса:
@@ -1552,8 +1552,10 @@ const productDrafts: ProductDraft[] = [
       },
     ],
     description:
-      "Векторный генератор сигналов до 45 ГГц для испытаний СВЧ-приёмников и систем связи. Срок поставки 2–3 недели.",
-    deliveryTime: "уточняется по заявке",
+      "Векторный генератор сигналов до 45 ГГц для испытаний СВЧ-приёмников и систем связи.",
+    // Срок указан поставщиком (был в тексте описания) — в deliveryTime, а не в description
+    // (Product.md, раздел 2.1).
+    deliveryTime: "2–3 недели",
     availability: "available",
     images: [
       "/images/products/ceyear-1466g-v/ceyear-1466g-v-1.jpg",
@@ -2405,6 +2407,23 @@ function toProduct(draft: ProductDraft): Product {
 
 export function getProducts(): Product[] {
   return productDrafts.map(toProduct);
+}
+
+// Данные карточек для клиентского блока «Вы недавно смотрели» (Frontend.md, раздел 10):
+// только поля ProductGrid и одно фото — серверная страница передаёт их пропом, чтобы
+// клиентский бандл не тянул весь каталог вместе с missingData.
+export function getProductCards(): ProductCardData[] {
+  return productDrafts.map((draft) => ({
+    id: draft.id,
+    slug: draft.slug,
+    category: draft.category,
+    title: draft.title,
+    model: draft.model,
+    description: draft.description,
+    deliveryTime: draft.deliveryTime,
+    availability: draft.availability,
+    images: draft.images?.slice(0, 1),
+  }));
 }
 
 export function getProductsByCategory(categorySlug: string): Product[] {

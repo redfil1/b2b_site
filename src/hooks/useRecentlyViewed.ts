@@ -29,13 +29,25 @@ const EMPTY: RecentlyViewedItem[] = [];
 let cached: RecentlyViewedItem[] = EMPTY;
 let hasRead = false;
 
+// Хранилище — внешние данные: элементы не той структуры отбрасываем, иначе битый
+// элемент ронял бы главную и /catalog (аудит 2026-10-18, Frontend.md, раздел 10).
+function isRecentlyViewedItem(value: unknown): value is RecentlyViewedItem {
+  if (typeof value !== "object" || value === null) return false;
+  const item = value as Record<string, unknown>;
+  return (
+    typeof item.slug === "string" &&
+    typeof item.category === "string" &&
+    typeof item.title === "string"
+  );
+}
+
 function readStored(): RecentlyViewedItem[] {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return EMPTY;
     const parsed: unknown = JSON.parse(raw);
     // slice — у посетителей, накопивших список при прежнем лимите, тоже показываем MAX_ITEMS.
-    return Array.isArray(parsed) ? (parsed as RecentlyViewedItem[]).slice(0, MAX_ITEMS) : EMPTY;
+    return Array.isArray(parsed) ? parsed.filter(isRecentlyViewedItem).slice(0, MAX_ITEMS) : EMPTY;
   } catch {
     return EMPTY;
   }

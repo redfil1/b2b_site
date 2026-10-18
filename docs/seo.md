@@ -221,7 +221,7 @@ Sitemap (раздел 3) при этом не меняем: `noindex` уже с�
 
 Раньше `app/legal/[doc]/page.tsx` не проверял `doc` вообще — любой несуществующий путь
 (`/legal/что-угодно`) отдавал HTTP 200 с общим текстом-заглушкой вместо 404 («мягкий
-404»). Теперь `doc`, которого нет в `KNOWN_LEGAL_DOC_TITLES`, вызывает `notFound()` в
+404»). Теперь `doc`, которого нет в `LEGAL_DOCS` (`lib/constants/legalDocs.ts`, `getLegalDocTitle()`; раньше — `KNOWN_LEGAL_DOC_TITLES`), вызывает `notFound()` в
 самой странице; `generateMetadata` для этого случая отдаёт `{ title: "Документ не
 найден", robots: { index: false } }` — тем же паттерном, что уже используется для
 несуществующей категории/товара каталога (`generateMetadata` в
@@ -257,9 +257,9 @@ Sitemap (раздел 3) при этом не меняем: `noindex` уже с�
 - `src/app/layout.tsx` — `metadataBase` из `config/site.ts`, вынос захардкоженного
   названия/описания в `config/site.ts` (раздел 2).
 - `src/app/catalog/[category]/page.tsx` — `generateStaticParams`, JSON-LD `BreadcrumbList`,
-  `alternates.canonical`, временный `robots: { index: false }` (разделы 5, 8.2, 9).
+  `alternates.canonical`, временный `robots: { index: false }` (снят 2026-10-18, раздел 9) (разделы 5, 8.2, 9).
 - `src/app/catalog/[category]/[slug]/page.tsx` — `generateStaticParams`, JSON-LD `Product`
-  и `BreadcrumbList`, `alternates.canonical`, временный `robots: { index: false }`
+  и `BreadcrumbList`, `alternates.canonical`, временный `robots: { index: false }` (снят 2026-10-18, раздел 9)
   (разделы 5, 8, 9).
 - `src/app/catalog/page.tsx` — `alt` плиток категорий = `Category.name` (раздел 6),
-  временный `robots: { index: false }` (раздел 9).
+  временный `robots: { index: false }` (снят 2026-10-18, раздел 9) (раздел 9).

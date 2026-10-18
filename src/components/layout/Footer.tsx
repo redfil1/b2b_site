@@ -13,7 +13,8 @@ export function Footer() {
           <span className="text-lg font-semibold text-primary">{siteConfig.name}</span>
           {/* Контакты — из src/config/site.ts (пока временные заглушки). tel:/mailto: —
               чтобы на мобильном номер/почта открывались сразу в звонилке/почтовом клиенте
-              (это не форма сбора данных и не CTA-переход, а сами контакты менеджера). */}
+              (это не форма сбора данных и не CTA-переход, а сами контакты менеджера — именное
+              исключение из запрета tel:/mailto:, Frontend.md, раздел 10). */}
           <div className="text-secondary">
             <p>
               Телефон:{" "}
@@ -43,8 +44,8 @@ export function Footer() {
           >
             Доставка и оплата
           </Link>
-          {/* Список legal-документов ещё не зафиксирован (Project_Structure.md: legal/[doc]) —
-              одна ссылка-заглушка на политику конфиденциальности. */}
+          {/* Список legal-документов — LEGAL_DOCS (lib/constants/legalDocs.ts); в подвале пока
+              только политика конфиденциальности, оферта доступна по /legal/offer. */}
           <Link
             href="/legal/privacy"
             className="text-secondary transition-colors duration-200 ease-out hover:text-primary"

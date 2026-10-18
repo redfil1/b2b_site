@@ -62,9 +62,8 @@ export interface Product {
   /** Артикул/код товара у поставщика — не у всех позиций есть. */
   sku?: string;
   /**
-   * Ключ категории. Список категорий пока не зафиксирован (см. lib/data/categories.ts),
-   * поэтому string, а не union/enum. Ужесточить типом, когда список категорий будет готов
-   * (Architecture.md, открытые вопросы).
+   * Ключ категории — slug из lib/data/categories.ts (список зафиксирован 2026-10-18,
+   * Product.md, раздел 7). string, а не union: категории пополняются вместе с каталогом.
    */
   category: string;
   specs: ProductSpec[];
@@ -79,6 +78,25 @@ export interface Product {
   availability: ProductAvailability;
   images?: string[];
 }
+
+/**
+ * Данные карточки в сетке (ProductGrid) — подмножество Product, не отдельная схема.
+ * Отдаётся клиентскому блоку «Вы недавно смотрели» пропом вместо импорта всего каталога
+ * в браузер (Frontend.md, раздел 10): без specs/features/documents и без служебного
+ * missingData (Product.md, раздел 4).
+ */
+export type ProductCardData = Pick<
+  Product,
+  | "id"
+  | "slug"
+  | "category"
+  | "title"
+  | "model"
+  | "description"
+  | "deliveryTime"
+  | "availability"
+  | "images"
+>;
 
 /**
  * Только для lib/data/products.ts — не импортировать в components/*.

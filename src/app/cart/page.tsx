@@ -3,7 +3,7 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container } from "@/components/ui/Container";
 import { CartPageClient } from "./CartPageClient";
 
-// Не индексируется постоянно (не временно, как noindex каталога, SEO.md, раздел 9) —
+// Не индексируется постоянно (в отличие от временного noindex каталога, снятого 2026-10-18) —
 // содержимое /cart уникально для конкретного браузера клиента (localStorage) и без
 // товаров в нём не несёт общего для всех посетителей контента (Architecture.md, 2.3).
 // Не добавляется в app/sitemap.ts по той же причине — тем же принципом, что и /search.

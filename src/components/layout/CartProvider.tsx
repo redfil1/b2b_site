@@ -25,12 +25,31 @@ let hasReadStorage = false;
 
 // localStorage может кинуть исключение (приватные окна с заблокированным доступом к
 // хранилищу) — тихо откатываемся к пустой корзине вместо падения рендера.
+// Хранилище — внешние данные (могли быть испорчены вручную, расширением или старой
+// версией сайта): берём только элементы нужной структуры с положительным целым
+// количеством, остальное молча отбрасываем — иначе битый элемент ронял бы рендер, а
+// счётчик в шапке становился NaN (аудит 2026-10-18, Frontend.md, раздел 10).
+function isCartItem(value: unknown): value is CartItem {
+  if (typeof value !== "object" || value === null) return false;
+  const item = value as Record<string, unknown>;
+  return (
+    typeof item.productSlug === "string" &&
+    typeof item.category === "string" &&
+    typeof item.title === "string" &&
+    (item.model === undefined || typeof item.model === "string") &&
+    (item.sku === undefined || typeof item.sku === "string") &&
+    typeof item.quantity === "number" &&
+    Number.isInteger(item.quantity) &&
+    item.quantity > 0
+  );
+}
+
 function readStoredCart(): CartItem[] {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return EMPTY_ITEMS;
     const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as CartItem[]) : EMPTY_ITEMS;
+    return Array.isArray(parsed) ? parsed.filter(isCartItem) : EMPTY_ITEMS;
   } catch {
     return EMPTY_ITEMS;
   }

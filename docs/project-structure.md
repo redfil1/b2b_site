@@ -1,4 +1,4 @@
-# Project Structure.md — B2B-магазин спецтехники
+# Project Structure.md — B2B-магазин контрольно-измерительного оборудования
 
 Статус: рабочая версия.
 Связанные документы: `Architecture.md`, `Tech Stack.md`, `Coding Rules.md`, `SEO.md`.
@@ -100,12 +100,12 @@ src/
 │   │                                 /cart, Frontend.md 8.3), карточки-примитивы,
 │   │                                 Container (без бизнес-логики)
 │   ├── layout/                    — Header (вкл. инлайн-поиск и иконку корзины), Footer,
-│   │                                 Breadcrumbs, CartProvider (контекст корзины, монтируется
+│   │                                 Breadcrumbs, SearchForm (форма поиска шапки и /search), CartProvider (контекст корзины, монтируется
 │   │                                 в layout.tsx рядом с Header/Footer — тот же уровень
 │   │                                 «оборачивает всё приложение», Frontend.md, раздел «Корзина»)
 │   └── features/                  — сборные блоки конкретных разделов
 │       ├── catalog/
-│       ├── product/                — компоненты карточки товара, AddToCartButton (кнопка
+│       ├── product/                — компоненты карточки товара, productAvailabilityBadge.ts (мэппинг статуса на вариант Badge), AddToCartButton (кнопка
 │       │                              «Добавить в корзину» — только на странице товара,
 │       │                              на карточке ProductGrid не используется, решено
 │       │                              в диалоге с пользователем 2026-09-06), ProductQuantityAddToCart
@@ -128,7 +128,8 @@ src/
 │   │                                   единый источник для app/legal/[doc]/page.tsx и
 │   │                                   app/sitemap.ts (самокритичный аудит, 2026-09-06)
 │   └── utils/
-│       └── phone.ts                 — normalizePhoneForTel() для href="tel:..."
+│       ├── phone.ts                 — normalizePhoneForTel() для href="tel:..."
+│       └── mailLinks.ts             — buildMailLinks()/buildMailMenuItems(): ссылки веб-почты и mailto: (Frontend.md 7.4, 8.1)
 │
 ├── types/
 │   ├── product.ts                   — `Product` (публичный тип для компонентов) и `ProductDraft`

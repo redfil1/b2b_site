@@ -4,13 +4,14 @@ import { HeroSlider } from "@/components/features/home/HeroSlider";
 import { RecentlyViewedProducts } from "@/components/features/home/RecentlyViewedProducts";
 import { Container } from "@/components/ui/Container";
 import { getCategories } from "@/lib/data/categories";
+import { getProductCards } from "@/lib/data/products";
 
 export default function Home() {
   const categories = getCategories();
 
   return (
     <Container as="main" className="py-10">
-      {/* Слайдер главной — Frontend.md, раздел 4.3.4 (тестовые слайды-заглушки). */}
+      {/* Слайдер главной — Frontend.md, разделы 4.3.4, 9. */}
       <HeroSlider />
 
       {/* Hero — заголовок и краткое УТП. Факты — из CLAUDE.md (описание проекта),
@@ -49,7 +50,7 @@ export default function Home() {
       {/* Блок «Вы недавно смотрели» (Frontend.md, разделы 8.7, 8.10) — поднят выше
           категорий: на мобильном внизу длинной страницы вернувшийся клиент его не
           долистывал. По данным localStorage, не рендерится при пустом списке. */}
-      <RecentlyViewedProducts />
+      <RecentlyViewedProducts products={getProductCards()} />
 
       {/* Блок «Производители» убран 2026-09-07 (Frontend.md, раздел 8.10): реальных
           логотипов нет, а список названий на главной ценности не давал. Данные
@@ -89,7 +90,7 @@ export default function Home() {
                 )}
               </div>
               <div className="flex flex-1 flex-col gap-3 p-6">
-                {/* text-lg на мобильной ширине (2 колонки) — чтобы длинные однословные
+                {/* text-base на мобильной ширине (2 колонки) — чтобы длинные однословные
                     названия («Прецизионные») не переносились посередине слова;
                     с sm: возвращается прежний размер. Даже так самые длинные слова не
                     всегда влезают в одну строку на самой узкой ширине (~150px минус
