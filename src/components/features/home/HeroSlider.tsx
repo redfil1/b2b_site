@@ -3,18 +3,11 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import type { SVGProps } from "react";
-import {
-  ExcavatorIcon,
-  FlaskIcon,
-  GasAnalyzerIcon,
-  GaugeIcon,
-} from "@/components/features/catalog/CategoryIcon";
 
 // Слайдер главной — Frontend.md, раздел 4.3.4. Раньше картинки были тестовыми PNG-
 // заглушками (сплошная плашка бренда, public/images/hero/) — по итогам аудита 2026-09-05
-// заменены на крупные схематичные SVG-иллюстрации в том же line-стиле, что иконки
-// категорий (components/features/catalog/CategoryIcon.tsx), т.к. реальных фотографий
-// оборудования ещё нет (Product.md, раздел 5). Illustration — компонент, а не путь к
+// заменены на крупные схематичные SVG-иллюстрации в line-стиле (первый слайд — осциллограмма,
+// с 2026-10-18, Frontend.md, раздел 9). Illustration — компонент, а не путь к
 // файлу: подложка-цвет (tone) остаётся, поверх неё — полупрозрачная белая иллюстрация,
 // чтобы не терять контраст с белым текстом слайда. Анимация — только fade через Tailwind
 // transition, без библиотек (раздел 4.3.3); при prefers-reduced-motion автопрокрутка
@@ -153,8 +146,7 @@ export function HeroSlider() {
   );
 }
 
-// Общие атрибуты иллюстраций слайдов — та же логика, что у ICON_PROPS в CategoryIcon.tsx:
-// однотонная линия без заливки, конкретный цвет и прозрачность приходят через className
+// Общие атрибуты иллюстраций слайдов: однотонная линия без заливки, конкретный цвет и прозрачность приходят через className
 // на вызывающей стороне (text-white/20 на самом <slide.Illustration>, см. выше).
 const ILLUSTRATION_PROPS = {
   fill: "none",
@@ -165,18 +157,21 @@ const ILLUSTRATION_PROPS = {
 } as const;
 
 /**
- * Слайд «Оборудование» — иконки бывших тестовых категорий, крупнее и в одном
- * приглушённом цвете. С 2026-10-18 подпись слайда — про контрольно-измерительное
- * оборудование (Frontend.md, раздел 9), а иллюстрация пока прежняя — временная
- * декоративная графика до замены реальными фото (раздел 4.3.4).
+ * Слайд «Оборудование» — осциллограмма на экране прибора (Frontend.md, раздел 9):
+ * сетка экрана (8×4 деления) и два сигнала — синусоида и меандр. Сетка — тонкой линией
+ * с половинной непрозрачностью поверх общего text-white/20, чтобы читалась как фон
+ * экрана, а не спорила с сигналами.
  */
 function EquipmentIllustration(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 216 56" fill="none" {...props}>
-      <GasAnalyzerIcon x={4} y={5} width={46} height={46} strokeWidth={2} />
-      <GaugeIcon x={58} y={5} width={46} height={46} strokeWidth={2} />
-      <FlaskIcon x={112} y={5} width={46} height={46} strokeWidth={2} />
-      <ExcavatorIcon x={166} y={5} width={46} height={46} strokeWidth={2} />
+    <svg viewBox="0 0 230 70" {...ILLUSTRATION_PROPS} {...props}>
+      <g strokeWidth={1} strokeOpacity={0.5}>
+        <rect x="2" y="2" width="226" height="66" rx="2" />
+        <path d="M30 2v66M58 2v66M86 2v66M115 2v66M144 2v66M172 2v66M200 2v66" />
+        <path d="M2 18.5h226M2 35h226M2 51.5h226" />
+      </g>
+      <path d="M2 35c11-26 22-26 33 0s22 26 33 0 22-26 33 0 22 26 33 0 22-26 33 0 22 26 33 0 22-26 25-14" />
+      <path d="M2 60h20v-12h20v12h20v-12h20v12h20v-12h20v12h20v-12h20v12h20v-12h20v12h26" />
     </svg>
   );
 }
