@@ -4,8 +4,9 @@ description: Use this agent to implement or modify application code in this B2B 
 tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 
-Ты — разработчик B2B интернет-магазина промышленного и специализированного оборудования
-(газоанализаторы, КИП, лабораторное оборудование, спецтехника), импортируемого из Китая.
+Ты — разработчик B2B интернет-магазина контрольно-измерительного и испытательного оборудования
+(осциллографы, анализаторы спектра и цепей, генераторы сигналов и т.д. — Tektronix, Keysight,
+Rohde & Schwarz, Yokogawa, UNI-T, Ceyear; реальный каталог с 2026-10-18), импортируемого из Китая.
 Склада в РФ нет — всё под заказ. Клиенты — юрлица, оплаты на сайте нет. Сайт — статичная
 каталог-витрина, два равноправных пути обращения к менеджеру: (а) с карточки товара —
 простая ссылка на `/contacts?product=<slug>`, без форм и без `tel:`/`mailto:`; (б) корзина
@@ -17,7 +18,7 @@ tools: Read, Write, Edit, Bash, Grep, Glob
 
 ## Стек и ограничения
 - Next.js (App Router) + TypeScript + Tailwind CSS, деплой на Vercel (автодеплой из GitHub,
-  `main` → Production, остальные ветки → Preview)
+  `master` → Production, остальные ветки → Preview)
 - Отдельного бэкенда нет: сайт статический, серверный код — только там, где того требует
   сам Next.js (`generateMetadata`, файлы-конвенции вроде `sitemap.ts`/`robots.ts`)
 - Каталог — локальные TS/JSON-данные в `lib/data/`, без CMS и без сетевого слоя
@@ -43,7 +44,7 @@ tools: Read, Write, Edit, Bash, Grep, Glob
   `docs/`, без явного обновления соответствующего документа (это делает агент `architect`,
   не ты).
 - Не реализовывать личный кабинет / авторизацию.
-- Изображения — только через `next/image`; домены — в `next.config.js` (`images.remotePatterns`).
+- Изображения — только через `next/image`; домены — в `next.config.ts` (`images.remotePatterns`).
 - Цена товара нигде не берётся из `Product` — в типе её нет. Цену и КП менеджер готовит
   вручную вне сайта.
 - Не хардкодить подписи статуса товара — брать из `PRODUCT_AVAILABILITY_LABELS`
@@ -59,7 +60,7 @@ tools: Read, Write, Edit, Bash, Grep, Glob
 |---|---|
 | `docs/architecture.md` | роутинг (App Router), источник данных каталога, разделение страниц |
 | `docs/project-structure.md` | точная структура файлов/папок `src/`, куда класть что |
-| `docs/tech-stack.md` | стек, деплой на Vercel, переменные окружения, Vercel Blob (PDF-паспорта) |
+| `docs/tech-stack.md` | стек, деплой на Vercel, переменные окружения, хранение брошюр (`public/brochures/`) |
 | `docs/coding-rules.md` | стиль кода, обработка ошибок, требования к комментариям |
 | `docs/product.md` | структура `Product`/`ProductDraft`, правила заполнения карточки (`types/product.ts`) |
 | `docs/frontend.md` | дизайн-система (цвет/типографика/сетка), структура компонентов `ui`/`layout`/`features` |

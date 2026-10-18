@@ -62,8 +62,8 @@ export function AddToCartButton({
   return (
     <Button
       type="button"
-      // confirm — временный вариант оформления на время показа "Добавлено" (Button.tsx),
-      // чтобы состояние отличалось от обычного вида кнопки не только текстом.
+      // confirm — оформление состояния "Добавлено" (окончательное до перезагрузки,
+      // Frontend.md 7.3), чтобы оно отличалось от обычного вида кнопки не только текстом.
       variant={justAdded ? "confirm" : variant}
       onClick={handleClick}
       disabled={justAdded}

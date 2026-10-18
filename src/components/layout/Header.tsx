@@ -9,7 +9,7 @@ import { useCart } from "@/hooks/useCart";
 
 // Навигация — статичный список страниц (Architecture.md, раздел 2). Без обращения
 // к lib/data — components/layout только вёрстка (Project_Structure.md).
-// «Производители» отдельным роутом нет — это полоса логотипов на главной (Architecture.md, 2).
+// «Производители» отдельным роутом нет (Architecture.md, 2); блок на главной убран 2026-09-07.
 const NAV_LINKS = [
   { label: "Каталог", href: "/catalog" },
   { label: "Услуги", href: "/services" },

@@ -5,8 +5,8 @@ import type { CartItem } from "@/types/cart";
 
 export interface CartContextValue {
   items: CartItem[];
-  /** quantity по умолчанию 1 — карточка каталога (Frontend.md, раздел 7.2). Если товар
-   *  уже в корзине, quantity прибавляется к уже отложенному количеству. */
+  /** quantity по умолчанию 1; на странице товара передаётся из степпера (Frontend.md,
+   *  раздел 7.3). Если товар уже в корзине, quantity прибавляется к отложенному. */
   addItem: (item: Omit<CartItem, "quantity">, quantity?: number) => void;
   removeItem: (productSlug: string) => void;
   /** quantity меньше 1 округляется до 1 — удаление позиции делается отдельно, removeItem. */

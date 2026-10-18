@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
+import { siteConfig } from "@/config/site";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container } from "@/components/ui/Container";
 import { DraftNotice } from "@/components/ui/DraftNotice";
 
 // ВРЕМЕННО (самокритичный аудит, 2026-09-06, см. docs/seo.md): текст страницы пока
-// черновой (DraftNotice ниже) — та же логика, что уже применена к /catalog/*
-// (SEO.md, раздел 9): не индексировать, пока не заменён финальным.
+// черновой (DraftNotice ниже) — не индексировать, пока не заменён финальным (SEO.md,
+// раздел 9.1; та же мера раньше стояла на /catalog/*, снята 2026-10-18).
 export const metadata: Metadata = {
-  title: "О компании — B2B-магазин промышленного оборудования",
+  title: `О компании — ${siteConfig.name}`,
   description: "Информация о компании: чем занимаемся, с кем и как работаем.",
   robots: { index: false },
 };

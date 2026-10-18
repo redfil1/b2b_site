@@ -3,13 +3,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { PRODUCT_AVAILABILITY_BADGE_VARIANT } from "@/components/features/product/productAvailabilityBadge";
-import type { Product } from "@/types/product";
+import type { ProductCardData } from "@/types/product";
 import { PRODUCT_AVAILABILITY_LABELS } from "@/types/product";
 
 // Сетка карточек товара — Frontend.md, раздел 4.3.1: grid-cols-1 → sm:2 → lg:3 → xl:4,
 // все карточки одинаковой высоты (items-stretch + h-full на карточке).
 export interface ProductGridProps {
-  products: Product[];
+  // ProductCardData, а не Product: сетка использует только поля карточки, и так её
+  // можно кормить облегчёнными данными из клиентского блока (Frontend.md, раздел 10).
+  products: ProductCardData[];
 }
 
 export function ProductGrid({ products }: ProductGridProps) {

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { siteConfig } from "@/config/site";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container } from "@/components/ui/Container";
@@ -16,7 +17,7 @@ export async function generateMetadata({ params }: PageProps<"/legal/[doc]">): P
   // ВРЕМЕННО (самокритичный аудит, 2026-09-06, см. docs/seo.md): текст документа
   // пока черновой (DraftNotice ниже) — не индексировать, пока не заменён финальным.
   return {
-    title: `${title} — B2B-магазин промышленного оборудования`,
+    title: `${title} — ${siteConfig.name}`,
     robots: { index: false },
   };
 }
