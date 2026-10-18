@@ -70,8 +70,10 @@ export interface Product {
   specs: ProductSpec[];
   /** Комплектация (вкладка «Комплектация») — плоский список, без вложенной структуры. */
   package?: string[];
-  /** Документы (вкладка «Документы», в т.ч. PDF-паспорт). Ссылки — на Vercel Blob, см. Tech Stack.md. */
+  /** Документы (вкладка «Документы», в т.ч. PDF-брошюра). Файлы — в public/brochures/, см. Tech Stack.md. */
   documents?: ProductDocument[];
+  /** Ключевые особенности — список под описанием во вкладке «Описание» (Product.md, раздел 7). */
+  features?: string[];
   description: string;
   deliveryTime: string;
   availability: ProductAvailability;

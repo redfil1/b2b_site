@@ -1,5 +1,5 @@
+import Image from "next/image";
 import Link from "next/link";
-import { CategoryIcon } from "@/components/features/catalog/CategoryIcon";
 import { HeroSlider } from "@/components/features/home/HeroSlider";
 import { RecentlyViewedProducts } from "@/components/features/home/RecentlyViewedProducts";
 import { Container } from "@/components/ui/Container";
@@ -22,8 +22,9 @@ export default function Home() {
           Промышленное оборудование под заказ
         </h1>
         <p className="max-w-2xl text-secondary md:text-lg">
-          Поставляем газоанализаторы, КИП, лабораторное оборудование и спецтехнику под заказ из
-          Китая. Склада в РФ нет — каждая позиция поставляется под заказ.
+          Поставляем контрольно-измерительное оборудование под заказ из Китая — осциллографы,
+          анализаторы спектра и цепей, генераторы сигналов, источники питания. Склада в РФ нет —
+          каждая позиция поставляется под заказ.
         </p>
         {/* Действие в теле главной (Frontend.md, раздел 8.10) — раньше на первом экране
             не было ни одной кнопки, кроме шапки. «Каталог» — внутренняя навигация;
@@ -57,10 +58,8 @@ export default function Home() {
 
       {/* Обзор категорий каталога — Architecture.md, раздел "Структура страниц":
           категория обязательна у товара, здесь — вход в каталог по категориям.
-          Плитка (иконка + текст) — та же вёрстка, что на /catalog (Frontend.md,
-          раздел 4.3.1), поэтому не через ui/Card: подложка идёт в край плитки. Иконка —
-          временная схематичная замена фото категории, декоративна (aria-hidden), т.к.
-          название уже есть текстом ниже. */}
+          Плитка (фото + текст) — та же вёрстка, что на /catalog (Frontend.md,
+          разделы 4.3.1, 9), поэтому не через ui/Card: фото идёт в край плитки. */}
       <section className="mt-6 flex flex-col gap-6">
         <h2 className="text-2xl font-semibold text-primary md:text-3xl">Категории каталога</h2>
         <div className="grid grid-cols-2 items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -70,25 +69,32 @@ export default function Home() {
               href={`/catalog/${category.slug}`}
               className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-transform duration-200 ease-out motion-safe:hover:scale-[1.02]"
             >
-              {/* aspect-[4/3] на мобильном (было square на всех ширинах) — чтобы все
-                  четыре плитки категорий комфортно ложились в первый экран телефона
-                  (оценка innovator); с sm: — прежний квадрат. */}
-              <div className="flex aspect-[4/3] w-full items-center justify-center bg-secondary sm:aspect-square">
-                {/* На мобильной ширине плитка вдвое уже (2 колонки вместо 1), поэтому
-                    иконка внутри пропорционально меньше; с sm: — прежний размер. */}
-                <CategoryIcon
-                  slug={category.slug}
-                  aria-hidden="true"
-                  className="h-14 w-14 sm:h-24 sm:w-24"
-                />
+              {/* Фото категории (Category.image — фото одного из её товаров, Frontend.md, раздел 9)
+                  вместо прежней временной line-иконки. object-contain + p-4 — фото поставщика
+                  разных пропорций вписываются без обрезки. aspect-[4/3] на мобильном (2 колонки),
+                  с sm: — квадрат. alt = Category.name (SEO.md, раздел 6). */}
+              <div
+                className={`relative aspect-[4/3] w-full border-b border-gray-100 sm:aspect-square ${
+                  category.image ? "bg-white" : "bg-secondary"
+                }`}
+              >
+                {category.image && (
+                  <Image
+                    src={category.image}
+                    alt={category.name}
+                    fill
+                    sizes="(max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                    className="object-contain p-4"
+                  />
+                )}
               </div>
               <div className="flex flex-1 flex-col gap-3 p-6">
                 {/* text-lg на мобильной ширине (2 колонки) — чтобы длинные однословные
-                    названия («Газоанализаторы») не переносились посередине слова;
+                    названия («Прецизионные») не переносились посередине слова;
                     с sm: возвращается прежний размер. Даже так самые длинные слова не
                     всегда влезают в одну строку на самой узкой ширине (~150px минус
                     p-6) — без переноса они вылезали за рамки h3 и обрезались внешним
-                    overflow-hidden плитки (нужен для скругления угла иконки).
+                    overflow-hidden плитки (нужен для скругления угла фото).
                     hyphens-auto — перенос по слогам через дефис (словарь берётся из
                     lang="ru" на <html>, layout.tsx), не произвольный разрыв символов;
                     break-words — подстраховка на случай браузера без словаря переноса

@@ -154,6 +154,8 @@ src/
 │   └── site.ts                     — название, meta по умолчанию (вкл. базовый URL для metadataBase, см. SEO.md), соцсети, контакты
 │
 public/
+├── images/products/{slug}/       — фото товаров, папка на товар (Product.md, раздел 7, 2026-10-18)
+└── brochures/{slug}.pdf          — PDF-брошюры товаров (Tech_Stack.md, решено 2026-10-18 вместо Vercel Blob)
 ```
 
 ## Правила

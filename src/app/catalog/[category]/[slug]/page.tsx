@@ -36,9 +36,8 @@ export async function generateMetadata({
   const { category: categorySlug, slug } = await params;
   const product = getProduct(categorySlug, slug);
 
-  // ВРЕМЕННО (аудит 2026-09-05, см. docs/seo.md): карточки — тестовые данные, не
-  // реальная номенклатура поставщика. noindex снимается, когда каталог наполнится
-  // реальными данными.
+  // Временный noindex каталога снят 2026-10-18 (SEO.md, раздел 9) — остаётся только
+  // у несуществующего товара.
   if (!product) {
     return { title: "Товар не найден", robots: { index: false } };
   }
@@ -48,7 +47,6 @@ export async function generateMetadata({
     description: product.description,
     // Относительный путь → metadataBase делает его абсолютным каноническим URL.
     alternates: { canonical: `/catalog/${product.category}/${product.slug}` },
-    robots: { index: false },
   };
 }
 
@@ -213,7 +211,22 @@ export default async function ProductPage({ params }: PageProps<"/catalog/[categ
               {
                 id: "description",
                 label: "Описание",
-                content: <p className="max-w-3xl text-primary">{product.description}</p>,
+                // features — под описанием (Frontend.md, раздел 9); нет поля — нет блока.
+                content: (
+                  <div className="max-w-3xl">
+                    <p className="text-primary">{product.description}</p>
+                    {product.features && product.features.length > 0 && (
+                      <>
+                        <h2 className="mt-6 text-xl font-semibold text-primary">Особенности</h2>
+                        <ul className="mt-3 list-disc space-y-1 pl-5 text-primary">
+                          {product.features.map((feature) => (
+                            <li key={feature}>{feature}</li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
+                  </div>
+                ),
               },
               {
                 id: "specs",

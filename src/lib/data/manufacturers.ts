@@ -1,18 +1,36 @@
 import type { Manufacturer } from "@/types/manufacturer";
 
-// Тестовые данные для проверки вёрстки — не согласованный с поставщиком список
-// производителей. Реальный список наполняется по мере поступления данных (Product.md, раздел 5).
+// Производители реального каталога поставщика (Product.md, раздел 7, 2026-10-18).
 //
 // Используется только для отображаемого имени производителя на карточке товара
 // (app/catalog/[category]/[slug]/page.tsx, поле `brand` в JSON-LD) и как ключ поиска
 // (app/search/page.tsx). Блок «Производители» на главной убран 2026-09-07 (Frontend.md,
-// раздел 8.10) — реальных логотипов нет, список названий на главной ценности не давал;
-// поэтому `logo` не заполнен и `getManufacturers()` больше не нужен.
+// раздел 8.10) — реальных логотипов нет; поэтому `logo` не заполнен.
 const manufacturers: Manufacturer[] = [
-  { slug: "hanke-instruments", name: "Hanke Instruments" },
-  { slug: "dalian-measurement", name: "Dalian Measurement Group" },
-  { slug: "yateks-lab-systems", name: "Yateks Lab Systems" },
-  { slug: "zhongce-machinery", name: "Zhongce Machinery" },
+  {
+    slug: "tektronix",
+    name: "Tektronix",
+  },
+  {
+    slug: "keysight",
+    name: "Keysight",
+  },
+  {
+    slug: "rohde-schwarz",
+    name: "Rohde & Schwarz",
+  },
+  {
+    slug: "yokogawa",
+    name: "Yokogawa",
+  },
+  {
+    slug: "uni-t",
+    name: "UNI-T",
+  },
+  {
+    slug: "ceyear",
+    name: "Ceyear",
+  },
 ];
 
 export function getManufacturer(slug: string): Manufacturer | undefined {

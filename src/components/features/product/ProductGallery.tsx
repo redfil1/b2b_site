@@ -78,12 +78,10 @@ export function ProductGallery({ title, images }: ProductGalleryProps) {
         type="button"
         onClick={() => openLightbox(active)}
         aria-label={`Увеличить фото товара «${title}»`}
-        // aspect-[16/9] на мобильном (было [4/3] на всех ширинах) — пока у товаров нет
-        // реальных фото, только сгенерированные заглушки на светлом фоне; крупный блок
-        // отжимал факты и кнопки под сгиб на телефоне (оценка innovator). object-contain
-        // ниже вписывает изображение без обрезки, так что более низкий блок его не режет.
-        // С sm: — прежние [4/3]; лайтбокс открывает изображение в [4/3] в любом случае.
-        className="relative aspect-[16/9] w-full cursor-zoom-in overflow-hidden rounded-2xl border border-gray-200 bg-secondary sm:aspect-[4/3]"
+        // aspect-[4/3] на всех ширинах — с 2026-10-18 у товаров реальные фото поставщика,
+        // временное [16/9] на мобильном (под заглушки, Frontend.md 8.9) снято (раздел 9).
+        // object-contain вписывает фото разных пропорций без обрезки.
+        className="relative aspect-[4/3] w-full cursor-zoom-in overflow-hidden rounded-2xl border border-gray-200 bg-white"
       >
         <Image
           src={images[active]}
