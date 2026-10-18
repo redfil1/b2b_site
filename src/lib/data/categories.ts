@@ -8,6 +8,8 @@ const categories: Category[] = [
   {
     slug: "oscilloscopes",
     name: "Осциллографы",
+    // 23 позиции пяти брендов — фильтр по производителю (Frontend.md, раздел 12).
+    filters: ["manufacturer"],
     description:
       "Цифровые осциллографы и осциллографы смешанных сигналов для отладки аналоговых, цифровых и силовых схем.",
     image: "/images/products/tektronix-mso58b-5-bw-1000/tektronix-mso58b-5-bw-1000-1.jpg",

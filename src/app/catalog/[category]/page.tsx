@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { CategoryFilters } from "@/components/features/catalog/CategoryFilters";
 import { ProductGrid } from "@/components/features/catalog/ProductGrid";
 import {
   Breadcrumbs,
@@ -10,7 +11,8 @@ import { BackToTopButton } from "@/components/ui/BackToTopButton";
 import { Container } from "@/components/ui/Container";
 import { JsonLd } from "@/components/ui/JsonLd";
 import { getCategories, getCategory } from "@/lib/data/categories";
-import { getProductsByCategory } from "@/lib/data/products";
+import { getManufacturer } from "@/lib/data/manufacturers";
+import { getProductCardsByCategory, getProductsByCategory } from "@/lib/data/products";
 
 // Полный список категорий из локальных данных — все страницы категорий
 // пререндерятся в статику (SEO.md, раздел 5). Неизвестный slug и так уходит
@@ -48,6 +50,22 @@ export default async function CategoryPage({ params }: PageProps<"/catalog/[cate
   }
 
   const products = getProductsByCategory(category.slug);
+  const hasManufacturerFilter = category.filters?.includes("manufacturer") ?? false;
+
+  // Чипы фильтра (Frontend.md, раздел 12): производители этой категории с числом позиций,
+  // по убыванию числа — самые представленные бренды первыми.
+  const manufacturerOptions = hasManufacturerFilter
+    ? Object.entries(
+        products.reduce<Record<string, number>>((counts, product) => {
+          if (product.manufacturer) {
+            counts[product.manufacturer] = (counts[product.manufacturer] ?? 0) + 1;
+          }
+          return counts;
+        }, {}),
+      )
+        .map(([slug, count]) => ({ slug, count, name: getManufacturer(slug)?.name ?? slug }))
+        .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
+    : [];
 
   // Один и тот же список крошек — и для видимой навигации, и для JSON-LD BreadcrumbList
   // (SEO.md, раздел 8.2): Главная → Каталог → Название категории. href на последнем
@@ -67,9 +85,14 @@ export default async function CategoryPage({ params }: PageProps<"/catalog/[cate
         <p className="mt-2 max-w-2xl text-secondary">{category.description}</p>
       )}
 
-      {/* CategoryFilters — открытый вопрос (Frontend.md, раздел 5), пока не реализован. */}
-
-      {products.length > 0 ? (
+      {/* Фильтр — только у категорий с Category.filters (Frontend.md, раздел 12); остальные
+          категории — обычная сетка, как раньше. */}
+      {hasManufacturerFilter && products.length > 0 ? (
+        <CategoryFilters
+          products={getProductCardsByCategory(category.slug)}
+          manufacturers={manufacturerOptions}
+        />
+      ) : products.length > 0 ? (
         <div className="mt-8">
           <ProductGrid products={products} />
         </div>
