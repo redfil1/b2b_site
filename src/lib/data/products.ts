@@ -3,7 +3,8 @@ import type { Product, ProductCardData, ProductDraft } from "@/types/product";
 // Реальный каталог поставщика, загружен 2026-10-18 (Product.md, раздел 7) из архива
 // «Брошюры_оборудование» (catalog.json + фото + PDF-брошюры). Правила переноса:
 // brand → manufacturer (slug из lib/data/manufacturers.ts), specs[].name → label,
-// brochure → documents (файл в public/brochures/), фото — public/images/products/{slug}/.
+// brochure → documents (файл в public/brochures/; это одностраничные листы характеристик,
+// не даташиты производителя — подпись «Лист характеристик», Frontend.md, раздел 11), фото — public/images/products/{slug}/.
 // Остаток у поставщика (stock) на сайт не переносится — склада в РФ нет, всё под заказ
 // (Product.md, 2.2). Срока поставки и страны производства в исходных данных нет:
 // deliveryTime — "уточняется по заявке", country — в missingData.
@@ -53,7 +54,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,8 МБ)",
         url: "/brochures/tektronix-mso58b-5-bw-1000.pdf",
       },
     ],
@@ -113,7 +114,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,4 МБ)",
         url: "/brochures/tektronix-mso54b-5-bw-500.pdf",
       },
     ],
@@ -168,7 +169,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,5 МБ)",
         url: "/brochures/tektronix-mdo3014.pdf",
       },
     ],
@@ -223,7 +224,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,5 МБ)",
         url: "/brochures/tektronix-mdo3024.pdf",
       },
     ],
@@ -278,7 +279,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,3 МБ)",
         url: "/brochures/tektronix-mdo3034.pdf",
       },
     ],
@@ -333,7 +334,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,4 МБ)",
         url: "/brochures/tektronix-mdo3104.pdf",
       },
     ],
@@ -388,7 +389,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,6 МБ)",
         url: "/brochures/tektronix-mdo32-3-bw-1000.pdf",
       },
     ],
@@ -443,7 +444,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 1,2 МБ)",
         url: "/brochures/tektronix-mdo34e-3-bw-200.pdf",
       },
     ],
@@ -498,7 +499,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 1,3 МБ)",
         url: "/brochures/tektronix-mso44b-4-bw-500-t3.pdf",
       },
     ],
@@ -553,7 +554,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,9 МБ)",
         url: "/brochures/tektronix-mso64b-6-bw-1000.pdf",
       },
     ],
@@ -608,7 +609,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,8 МБ)",
         url: "/brochures/tektronix-mso66b-6-bw-1000.pdf",
       },
     ],
@@ -655,7 +656,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,6 МБ)",
         url: "/brochures/keysight-exr258a.pdf",
       },
     ],
@@ -697,7 +698,7 @@ const productDrafts: ProductDraft[] = [
     features: ["10-битный АЦП", "Низкий собственный шум", "Анализ джиттера и протоколов (опции)"],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,6 МБ)",
         url: "/brochures/keysight-dsos254a.pdf",
       },
     ],
@@ -740,7 +741,7 @@ const productDrafts: ProductDraft[] = [
     features: ["Генератор встроен", "Сенсорный экран", "Высокая скорость захвата осциллограмм"],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,9 МБ)",
         url: "/brochures/keysight-dsox3104g.pdf",
       },
     ],
@@ -783,7 +784,7 @@ const productDrafts: ProductDraft[] = [
     features: ["Большой сенсорный экран", "Генератор встроен", "Зональный запуск касанием"],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,4 МБ)",
         url: "/brochures/keysight-dsox4104g.pdf",
       },
     ],
@@ -830,7 +831,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,5 МБ)",
         url: "/brochures/keysight-dsox4154g.pdf",
       },
     ],
@@ -873,7 +874,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,4 МБ)",
         url: "/brochures/keysight-exr058a.pdf",
       },
     ],
@@ -916,7 +917,7 @@ const productDrafts: ProductDraft[] = [
     features: ["Компактный корпус", "Сенсорный экран", "Логические каналы"],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,3 МБ)",
         url: "/brochures/yokogawa-dlm3024.pdf",
       },
     ],
@@ -958,7 +959,7 @@ const productDrafts: ProductDraft[] = [
     features: ["10-битный АЦП", "Сенсорный экран", "Интуитивное управление"],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,7 МБ)",
         url: "/brochures/rohde-schwarz-rtb2004-200m.pdf",
       },
     ],
@@ -1005,7 +1006,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,5 МБ)",
         url: "/brochures/rohde-schwarz-rtm3004-1g.pdf",
       },
     ],
@@ -1048,7 +1049,7 @@ const productDrafts: ProductDraft[] = [
     features: ["12 бит при полосе 2 ГГц", "Доступная цена"],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,2 МБ)",
         url: "/brochures/uni-t-mso6204hdp.pdf",
       },
     ],
@@ -1089,7 +1090,7 @@ const productDrafts: ProductDraft[] = [
     features: ["12-битный АЦП", "Встроенный логический анализатор"],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,4 МБ)",
         url: "/brochures/uni-t-mso5104hd.pdf",
       },
     ],
@@ -1132,7 +1133,7 @@ const productDrafts: ProductDraft[] = [
     features: ["Память 1 Гточка", "Полоса 2 ГГц"],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,6 МБ)",
         url: "/brochures/uni-t-mso7204x.pdf",
       },
     ],
@@ -1178,7 +1179,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,7 МБ)",
         url: "/brochures/keysight-n9000b.pdf",
       },
     ],
@@ -1217,7 +1218,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,4 МБ)",
         url: "/brochures/rohde-schwarz-fsv3044.pdf",
       },
     ],
@@ -1255,7 +1256,7 @@ const productDrafts: ProductDraft[] = [
     features: ["Широкий диапазон до 8,4 ГГц", "Доступная цена"],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,4 МБ)",
         url: "/brochures/uni-t-uts3084b.pdf",
       },
     ],
@@ -1301,7 +1302,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,7 МБ)",
         url: "/brochures/keysight-p9377b.pdf",
       },
     ],
@@ -1340,7 +1341,7 @@ const productDrafts: ProductDraft[] = [
     features: ["4 порта до 44 ГГц в компактном корпусе", "Измерение дифференциальных S-параметров"],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,8 МБ)",
         url: "/brochures/keysight-p5027a-400.pdf",
       },
     ],
@@ -1383,7 +1384,7 @@ const productDrafts: ProductDraft[] = [
     features: ["Измерения в миллиметровом диапазоне", "Готовый комплект с калибровкой"],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,4 МБ)",
         url: "/brochures/ceyear-3674p-047-049.pdf",
       },
     ],
@@ -1422,7 +1423,7 @@ const productDrafts: ProductDraft[] = [
     features: ["Доступный VNA до 9 ГГц", "Для разработки и производства"],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,3 МБ)",
         url: "/brochures/uni-t-vna4092.pdf",
       },
     ],
@@ -1477,7 +1478,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,4 МБ)",
         url: "/brochures/tektronix-afg31021.pdf",
       },
     ],
@@ -1512,7 +1513,7 @@ const productDrafts: ProductDraft[] = [
     features: ["Чистый сигнал для настройки ВЧ-трактов", "Удобен для производства и лабораторий"],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,5 МБ)",
         url: "/brochures/keysight-ap5001a.pdf",
       },
     ],
@@ -1547,7 +1548,7 @@ const productDrafts: ProductDraft[] = [
     features: ["Широкий диапазон частот", "Векторная модуляция"],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,4 МБ)",
         url: "/brochures/ceyear-1466g-v.pdf",
       },
     ],
@@ -1592,7 +1593,7 @@ const productDrafts: ProductDraft[] = [
     features: ["4 канала в одном приборе", "16-битное разрешение"],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,2 МБ)",
         url: "/brochures/uni-t-utg9504t.pdf",
       },
     ],
@@ -1629,7 +1630,7 @@ const productDrafts: ProductDraft[] = [
     features: ["Низкий фазовый шум", "Механический аттенюатор"],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,2 МБ)",
         url: "/brochures/uni-t-usg3045m-p.pdf",
       },
     ],
@@ -1668,7 +1669,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,5 МБ)",
         url: "/brochures/rohde-schwarz-esr3.pdf",
       },
     ],
@@ -1707,7 +1708,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,4 МБ)",
         url: "/brochures/rohde-schwarz-esrp7.pdf",
       },
     ],
@@ -1753,7 +1754,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,3 МБ)",
         url: "/brochures/yokogawa-wt310e.pdf",
       },
     ],
@@ -1795,7 +1796,7 @@ const productDrafts: ProductDraft[] = [
     features: ["Высокая точность", "Анализ гармоник и КПД", "Для инверторов и электроприводов"],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,2 МБ)",
         url: "/brochures/yokogawa-wt1804r.pdf",
       },
     ],
@@ -1841,7 +1842,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,4 МБ)",
         url: "/brochures/tektronix-6221-2182a-e.pdf",
       },
     ],
@@ -1892,7 +1893,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,5 МБ)",
         url: "/brochures/tektronix-6514-e.pdf",
       },
     ],
@@ -1943,7 +1944,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,4 МБ)",
         url: "/brochures/tektronix-6517b-e.pdf",
       },
     ],
@@ -1990,7 +1991,7 @@ const productDrafts: ProductDraft[] = [
     features: ["Четыре квадранта работы", "Высокое разрешение по току", "Графический интерфейс"],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,3 МБ)",
         url: "/brochures/keysight-b2910cl.pdf",
       },
     ],
@@ -2037,7 +2038,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,5 МБ)",
         url: "/brochures/rohde-schwarz-hmp4040.pdf",
       },
     ],
@@ -2076,7 +2077,7 @@ const productDrafts: ProductDraft[] = [
     features: ["Высокая точность", "Быстрые измерения для автоматизации"],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,4 МБ)",
         url: "/brochures/uni-t-ut8806.pdf",
       },
     ],
@@ -2122,7 +2123,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,6 МБ)",
         url: "/brochures/keysight-53230a.pdf",
       },
     ],
@@ -2161,7 +2162,7 @@ const productDrafts: ProductDraft[] = [
     features: ["Модульная система", "Сенсорный экран", "Переносное исполнение"],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,2 МБ)",
         url: "/brochures/yokogawa-gp10.pdf",
       },
     ],
@@ -2196,7 +2197,7 @@ const productDrafts: ProductDraft[] = [
     features: ["До 450 каналов", "Модульная конструкция", "Большой сенсорный экран"],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,3 МБ)",
         url: "/brochures/yokogawa-gp20.pdf",
       },
     ],
@@ -2241,7 +2242,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,5 МБ)",
         url: "/brochures/tektronix-mdo3sa.pdf",
       },
     ],
@@ -2288,7 +2289,7 @@ const productDrafts: ProductDraft[] = [
     features: ["Генератор и осциллограф в одном приборе", "Экономия места на рабочем столе"],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,6 МБ)",
         url: "/brochures/tektronix-mdo3afg.pdf",
       },
     ],
@@ -2338,7 +2339,7 @@ const productDrafts: ProductDraft[] = [
     ],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,8 МБ)",
         url: "/brochures/tektronix-mdo3bnd.pdf",
       },
     ],
@@ -2381,7 +2382,7 @@ const productDrafts: ProductDraft[] = [
     features: ["Модернизация без замены прибора"],
     documents: [
       {
-        title: "Брошюра (PDF)",
+        title: "Лист характеристик (PDF, 1 стр., 0,8 МБ)",
         url: "/brochures/keysight-exr2bw.pdf",
       },
     ],

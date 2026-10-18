@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { PRODUCT_AVAILABILITY_BADGE_VARIANT } from "@/components/features/product/productAvailabilityBadge";
 import type { ProductCardData } from "@/types/product";
-import { PRODUCT_AVAILABILITY_LABELS } from "@/types/product";
+import { DELIVERY_TIME_UNKNOWN, PRODUCT_AVAILABILITY_LABELS } from "@/types/product";
 
 // Сетка карточек товара — Frontend.md, раздел 4.3.1: grid-cols-1 → sm:2 → lg:3 → xl:4,
 // все карточки одинаковой высоты (items-stretch + h-full на карточке).
@@ -53,14 +53,15 @@ export function ProductGrid({ products }: ProductGridProps) {
             <h3 className="text-xl font-semibold text-primary">{product.title}</h3>
             {product.model && <p className="text-sm text-secondary">Модель: {product.model}</p>}
             <p className="line-clamp-3 text-secondary">{product.description}</p>
-            {/* Срок поставки отдельной строкой, не только в бейдже наличия (Frontend.md,
-                раздел 8.5): бейдж «Под заказ» одинаков почти у всех позиций, а срок —
-                то, по чему реально сканируют список. mt-auto прижимает строку к низу
-                карточки, чтобы она была на одной линии у всех карточек ряда. */}
-            <p className="mt-auto flex items-center gap-1.5 pt-1 text-sm text-secondary">
-              <Clock aria-hidden="true" className="h-4 w-4 shrink-0" />
-              Срок поставки: {product.deliveryTime}
-            </p>
+            {/* Срок поставки отдельной строкой (Frontend.md, разделы 8.5, 11) — только когда он
+                конкретный: при «уточняется по заявке» у почти всех позиций строка была шумом и
+                прятала реальное отличие. mt-auto прижимает строку к низу карточки. */}
+            {product.deliveryTime !== DELIVERY_TIME_UNKNOWN && (
+              <p className="mt-auto flex items-center gap-1.5 pt-1 text-sm text-secondary">
+                <Clock aria-hidden="true" className="h-4 w-4 shrink-0" />
+                Срок поставки: {product.deliveryTime}
+              </p>
+            )}
           </div>
         </Link>
       ))}

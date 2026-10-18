@@ -175,7 +175,7 @@ export default async function ProductPage({ params }: PageProps<"/catalog/[categ
                   rel="noreferrer"
                   className="inline-flex items-center justify-center rounded-2xl border border-brand-800 px-5 py-2.5 text-base font-semibold text-brand-800 transition-colors duration-200 ease-out hover:bg-brand-800/5"
                 >
-                  {documents.length > 1 ? doc.title : "Скачать PDF"}
+                  {doc.title}
                 </a>
               ))}
               {/* Второй путь обращения к менеджеру — корзина (Frontend.md, раздел 7.3):
@@ -233,20 +233,23 @@ export default async function ProductPage({ params }: PageProps<"/catalog/[categ
                 label: "Характеристики",
                 content: <ProductSpecsTable specs={product.specs} />,
               },
-              {
-                id: "package",
-                label: "Комплектация",
-                content:
-                  product.package && product.package.length > 0 ? (
-                    <ul className="list-disc space-y-1 pl-5 text-primary">
-                      {product.package.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-secondary">Информация о комплектации уточняется.</p>
-                  ),
-              },
+              // «Комплектация» без данных не показывается (Frontend.md, раздел 11): пустая
+              // вкладка «уточняется» выглядела как недоделка.
+              ...(product.package && product.package.length > 0
+                ? [
+                    {
+                      id: "package",
+                      label: "Комплектация",
+                      content: (
+                        <ul className="list-disc space-y-1 pl-5 text-primary">
+                          {product.package.map((item) => (
+                            <li key={item}>{item}</li>
+                          ))}
+                        </ul>
+                      ),
+                    },
+                  ]
+                : []),
               {
                 id: "documents",
                 label: "Документы",

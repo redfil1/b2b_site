@@ -45,6 +45,13 @@ export const PRODUCT_CONTACT_CTA_LABELS: Record<ProductAvailability, string> = {
   unavailable: "Уточнить возможность поставки",
 };
 
+/**
+ * Значение deliveryTime, когда поставщик срок не указал (Product.md, раздел 2.1). Вынесено в
+ * константу, т.к. от него зависит вёрстка: в сетке каталога строка срока при этом значении
+ * не выводится (Frontend.md, раздел 11).
+ */
+export const DELIVERY_TIME_UNKNOWN = "уточняется по заявке";
+
 export interface Product {
   id: string;
   slug: string;

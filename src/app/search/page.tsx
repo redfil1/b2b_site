@@ -63,13 +63,60 @@ const FUSE_OPTIONS: IFuseOptions<SearchEntry> = {
 // Индекс строится один раз при загрузке модуля, а не на каждый запрос: каталог —
 // локальные данные, не меняющиеся во время работы процесса, пересборка Fuse на
 // каждый рендер страницы была лишней работой.
-const SEARCH_INDEX = new Fuse(buildSearchEntries(), FUSE_OPTIONS);
+const SEARCH_ENTRIES = buildSearchEntries();
+const SEARCH_INDEX = new Fuse(SEARCH_ENTRIES, FUSE_OPTIONS);
+
+// Нормализация запроса до fuse.js (Frontend.md, раздел 11): инженеры пишут бренды
+// по-русски и единицы латиницей («кейсайт», «1 GHz»), а в данных — латинские названия
+// брендов и «ГГц». Нечёткий поиск такие расхождения не ловит («кейсайт» → 0, «текстроникс»
+// находил R&S по «…электроники»), поэтому — небольшой словарь замен, не второй поиск.
+const QUERY_SYNONYMS: [RegExp, string][] = [
+  [/кейсайт|кисайт|кейсайд/giu, "Keysight"],
+  [/текстроникс|тектроникс|тэктроникс/giu, "Tektronix"],
+  [/роде\s*(?:и\s*|&\s*|-\s*)?шварц|r\s*&\s*s/giu, "Rohde & Schwarz"],
+  [/[йи]окогава|ёкогава/giu, "Yokogawa"],
+  [/юни[\s-]?ти|юнит/giu, "UNI-T"],
+  [/кейтли|кейсли/giu, "Keithley"],
+  [/сейер|сейар|цейер/giu, "Ceyear"],
+  [/ghz/giu, "ГГц"],
+  [/mhz/giu, "МГц"],
+  [/khz/giu, "кГц"],
+];
+
+function normalizeQuery(query: string): string {
+  return QUERY_SYNONYMS.reduce((text, [pattern, value]) => text.replace(pattern, value), query);
+}
+
+// Частота в запросе («1 ГГц», «500 МГц») ищется точно, а не нечётко: иначе «1 ГГц»
+// находил и «1,5 ГГц», и «45 ГГц» (29 из 52 позиций). Остаток запроса (если есть) идёт
+// в fuse.js, частота — фильтром по названию и характеристикам.
+const FREQUENCY_PATTERN = /(\d+(?:[.,]\d+)?)\s*(ГГц|МГц|кГц)/iu;
+
+function hasFrequency(entry: SearchEntry, value: string, unit: string): boolean {
+  // Перед числом не должно быть цифры/запятой/точки — «1 ГГц» не совпадает с «1,5 ГГц»
+  // и «11 ГГц»; после числа — пробел (необязательный) и та же единица.
+  const number = value.replace(/[.,]/, "[.,]");
+  const exact = new RegExp(`(^|[^\\d.,])${number}\\s*${unit}`, "iu");
+  return [entry.title, ...entry.specs.map((spec) => spec.value)].some((text) => exact.test(text));
+}
+
+function searchCatalog(rawQuery: string): Product[] {
+  const query = normalizeQuery(rawQuery);
+  const frequency = query.match(FREQUENCY_PATTERN);
+  if (!frequency) {
+    return SEARCH_INDEX.search(query).map((result) => result.item);
+  }
+  const [, value, unit] = frequency;
+  const rest = query.replace(FREQUENCY_PATTERN, " ").trim();
+  const candidates = rest ? SEARCH_INDEX.search(rest).map((result) => result.item) : SEARCH_ENTRIES;
+  return candidates.filter((entry) => hasFrequency(entry, value, unit));
+}
 
 export default async function SearchPage(props: PageProps<"/search">) {
   const { q } = await props.searchParams;
   const query = (typeof q === "string" ? q : "").trim();
 
-  const results: Product[] = query ? SEARCH_INDEX.search(query).map((result) => result.item) : [];
+  const results: Product[] = query ? searchCatalog(query) : [];
 
   return (
     <Container as="main" className="py-10">
