@@ -15,7 +15,8 @@ import { useCallback, useSyncExternalStore } from "react";
 // не нужно (Project_Structure.md, «Правила»).
 
 const STORAGE_KEY = "recentlyViewed";
-const MAX_ITEMS = 6;
+// 3 последних товара (Frontend.md, раздел 8.7; было 6 до 2026-10-18).
+const MAX_ITEMS = 3;
 
 export interface RecentlyViewedItem {
   slug: string;
@@ -33,7 +34,8 @@ function readStored(): RecentlyViewedItem[] {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return EMPTY;
     const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as RecentlyViewedItem[]) : EMPTY;
+    // slice — у посетителей, накопивших список при прежнем лимите, тоже показываем MAX_ITEMS.
+    return Array.isArray(parsed) ? (parsed as RecentlyViewedItem[]).slice(0, MAX_ITEMS) : EMPTY;
   } catch {
     return EMPTY;
   }
