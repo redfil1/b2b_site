@@ -17,7 +17,7 @@
   `next typegen && tsc --noEmit`: глобальные типы `PageProps`/`LayoutProps` генерирует
   Next.js (`next dev`/`next build`/`next typegen`), а CI запускает typecheck до build на
   чистой копии репозитория — без `typegen` проверка там падала (с 2026-09-07 и на `master`).
-- **ESLint + Prettier** — единый конфиг на проект, коммитится в репо, чтобы код из разных чатов не расходился по стилю.
+- **ESLint + Prettier** — единый конфиг на проект, коммитится в репо, чтобы код из разных чатов не расходился по стилю. В `.prettierrc.json` — `"endOfLine": "auto"` (2026-10-18): на Windows git (`core.autocrlf`) отдаёт рабочие файлы с CRLF, и `format:check` иначе ругался на все файлы, хотя в репозитории они с LF.
 - **CI** (`.github/workflows/ci.yml`, добавлен 2026-09-06) — на каждый push и pull
   request прогоняет `lint` → `typecheck` → `build`; дополняет проверку Vercel (та
   гоняет только `next build` на деплое), тестов там нет — их и в проекте нет
