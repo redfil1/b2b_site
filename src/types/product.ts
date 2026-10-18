@@ -98,6 +98,7 @@ export type ProductCardData = Pick<
   | "slug"
   | "category"
   | "title"
+  | "manufacturer"
   | "model"
   | "description"
   | "deliveryTime"

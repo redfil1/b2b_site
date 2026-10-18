@@ -2413,18 +2413,29 @@ export function getProducts(): Product[] {
 // Данные карточек для клиентского блока «Вы недавно смотрели» (Frontend.md, раздел 10):
 // только поля ProductGrid и одно фото — серверная страница передаёт их пропом, чтобы
 // клиентский бандл не тянул весь каталог вместе с missingData.
-export function getProductCards(): ProductCardData[] {
-  return productDrafts.map((draft) => ({
+function toProductCard(draft: ProductDraft): ProductCardData {
+  return {
     id: draft.id,
     slug: draft.slug,
     category: draft.category,
     title: draft.title,
+    manufacturer: draft.manufacturer,
     model: draft.model,
     description: draft.description,
     deliveryTime: draft.deliveryTime,
     availability: draft.availability,
     images: draft.images?.slice(0, 1),
-  }));
+  };
+}
+
+export function getProductCards(): ProductCardData[] {
+  return productDrafts.map(toProductCard);
+}
+
+// То же для одной категории — страница категории передаёт карточки в клиентский
+// CategoryFilters (Frontend.md, раздел 12), без specs/features/documents.
+export function getProductCardsByCategory(categorySlug: string): ProductCardData[] {
+  return productDrafts.filter((draft) => draft.category === categorySlug).map(toProductCard);
 }
 
 export function getProductsByCategory(categorySlug: string): Product[] {

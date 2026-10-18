@@ -10,4 +10,9 @@ export interface Category {
   description?: string;
   /** Изображение/иконка категории для карточки категории на /catalog. */
   image?: string;
+  /** Какие фильтры показывать на /catalog/[category] (Frontend.md, раздел 12). Нет поля — фильтров нет. */
+  filters?: CategoryFilterField[];
 }
+
+/** Поля, по которым умеет фильтровать CategoryFilters (Frontend.md, раздел 12). */
+export type CategoryFilterField = "manufacturer";
