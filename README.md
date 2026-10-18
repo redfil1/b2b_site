@@ -15,7 +15,7 @@
 
 Next.js (App Router) + TypeScript + Tailwind CSS. Отдельного бэкенда нет — каталог отдаётся
 локальными TS-данными из `src/lib/data/`, без CMS и без сети. Деплой — Vercel, автодеплой из
-GitHub (`main` → Production, остальные ветки → Preview). Подробнее — [`docs/tech-stack.md`](./docs/tech-stack.md).
+GitHub (`master` → Production, остальные ветки → Preview). Подробнее — [`docs/tech-stack.md`](./docs/tech-stack.md).
 
 ## Запуск локально
 

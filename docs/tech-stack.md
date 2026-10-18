@@ -67,7 +67,7 @@ cookies/fingerprinting (например, Google Analytics), которые сю
 ## Деплой на Vercel
 
 - Репозиторий подключается к Vercel напрямую (GitHub integration) — автодеплой на пуш.
-- **Ветка `main` → Production**, любая другая ветка/PR → Preview Deployment (у каждого PR своя ссылка, удобно ревьюить чаты "Фронт"/"Карточки" отдельно от прод-кода).
+- **Ветка `master` → Production** (в репозитории основная ветка — `master`, не `main`; исправлено 2026-10-18), любая другая ветка/PR → Preview Deployment (у каждого PR своя ссылка, удобно ревьюить чаты "Фронт"/"Карточки" отдельно от прод-кода).
 - Переменные окружения: задаются в Vercel Dashboard (Project Settings → Environment Variables), раздельно для Production/Preview/Development.
 - В репозитории — `.env.example` с именами переменных без значений (коммитится), `.env.local` — реальные значения (в `.gitignore`, не коммитится).
 - Публичные переменные (доступны в браузере) — обязательно с префиксом `NEXT_PUBLIC_`, остальные — серверные (доступны только в route handlers / server components).

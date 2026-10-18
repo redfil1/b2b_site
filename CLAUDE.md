@@ -29,7 +29,7 @@ Keysight, Rohde & Schwarz, Yokogawa, UNI-T, Ceyear), импортируемог�
 
 ## Стек и ключевые ограничения
 - Next.js (App Router) + TypeScript + Tailwind CSS, деплой на Vercel (автодеплой из GitHub,
-  `main` → Production, остальные ветки → Preview)
+  `master` → Production, остальные ветки → Preview)
 - Отдельного бэкенда нет — вся серверная логика внутри route handler'ов Next.js
 - Каталог — локальные TS/JSON-данные в `lib/data/`, без CMS и без сетевого слоя
 - «Живых» сетевых сценариев на сайте нет — это статичная каталог-витрина. Форма заявки
