@@ -13,7 +13,10 @@
 
 - **TypeScript strict mode** включён — меньше багов при интеграции кода из разных чатов.
   Проверка — `npm run typecheck` (`tsc --noEmit`, добавлен в `package.json` при
-  самокритичном аудите, 2026-09-06 — раньше набирали вручную каждый раз).
+  самокритичном аудите, 2026-09-06 — раньше набирали вручную каждый раз). С 2026-10-18 —
+  `next typegen && tsc --noEmit`: глобальные типы `PageProps`/`LayoutProps` генерирует
+  Next.js (`next dev`/`next build`/`next typegen`), а CI запускает typecheck до build на
+  чистой копии репозитория — без `typegen` проверка там падала (с 2026-09-07 и на `master`).
 - **ESLint + Prettier** — единый конфиг на проект, коммитится в репо, чтобы код из разных чатов не расходился по стилю.
 - **CI** (`.github/workflows/ci.yml`, добавлен 2026-09-06) — на каждый push и pull
   request прогоняет `lint` → `typecheck` → `build`; дополняет проверку Vercel (та
