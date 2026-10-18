@@ -1,15 +1,13 @@
-import type { ComponentType, ReactElement, SVGProps } from "react";
+import type { SVGProps } from "react";
 
-// Простые однотонные line-иконки категорий — временная схематичная замена фото категорий,
-// пока каталог не наполнен реальными данными от поставщика (Product.md, раздел 5; см. также
-// пометку в Frontend.md, раздел 4.3.1). Ручные SVG-пути, а не иконочная библиотека: под
-// четыре конкретные категории компонентов из lucide-react (используется для остальных иконок
-// сайта, Frontend.md 4.5) нет, а заводить второй набор иконок только ради четырёх штук —
-// не оправдано, поэтому здесь сознательное отступление от «единого стиля без смешивания
-// icon-сетов» (зафиксировано в Frontend.md, раздел 4.5).
+// Ручные line-иконки бывших тестовых категорий. С 2026-10-18 плитки категорий и карточки
+// товаров показывают реальные фото (Frontend.md, раздел 9) — компонент CategoryIcon и
+// раскраска по категориям удалены. Сами иконки остались только как часть декоративной
+// иллюстрации первого слайда HeroSlider (Frontend.md, раздел 4.3.4) — поэтому и файл
+// не переименован в рамках этой правки.
 //
 // stroke="currentColor" — каждая иконка одноцветная линия без заливки, конкретный цвет
-// приходит через text-* класс на обёртке (см. CategoryIcon ниже), не хардкожен внутри.
+// приходит через text-* класс снаружи (HeroSlider), не хардкожен внутри.
 const ICON_PROPS = {
   viewBox: "0 0 48 48",
   fill: "none",
@@ -69,33 +67,4 @@ export function ExcavatorIcon(props: SVGProps<SVGSVGElement>) {
       <path d="M44 22 40 29 33 27" />
     </svg>
   );
-}
-
-// Цвет каждой иконки — из расширенной палитры (Frontend.md, раздел 4.1, аудит 2026-09-05):
-// разные цвета на разных плитках вместо одного оттенка brand на всех.
-const CATEGORY_ICONS: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
-  "gas-analyzers": GasAnalyzerIcon,
-  kip: GaugeIcon,
-  "lab-equipment": FlaskIcon,
-  "special-equipment": ExcavatorIcon,
-};
-
-const CATEGORY_ICON_COLORS: Record<string, string> = {
-  "gas-analyzers": "text-accent-teal",
-  kip: "text-accent-amber",
-  "lab-equipment": "text-brand-800",
-  "special-equipment": "text-brand-600",
-};
-
-export interface CategoryIconProps extends SVGProps<SVGSVGElement> {
-  slug: string;
-}
-
-export function CategoryIcon({ slug, className = "", ...props }: CategoryIconProps): ReactElement {
-  // Список категорий пока не зафиксирован окончательно (Architecture.md, открытые
-  // вопросы) — на случай будущего slug без своей иконки берём нейтральный дефолт вместо
-  // падения вёрстки.
-  const Icon = CATEGORY_ICONS[slug] ?? GaugeIcon;
-  const color = CATEGORY_ICON_COLORS[slug] ?? "text-brand-800";
-  return <Icon className={`${color} ${className}`} {...props} />;
 }

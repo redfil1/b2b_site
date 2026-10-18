@@ -1,7 +1,7 @@
 import { Clock } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
-import { CategoryIcon } from "@/components/features/catalog/CategoryIcon";
 import { PRODUCT_AVAILABILITY_BADGE_VARIANT } from "@/components/features/product/productAvailabilityBadge";
 import type { Product } from "@/types/product";
 import { PRODUCT_AVAILABILITY_LABELS } from "@/types/product";
@@ -19,23 +19,29 @@ export function ProductGrid({ products }: ProductGridProps) {
         <Link
           key={product.id}
           href={`/catalog/${product.category}/${product.slug}`}
-          // Не через ui/Card (у него фиксированный p-6) — верхний блок с иконкой идёт
-          // в край карточки, как у плиток категорий (CategoryPage/главная,
-          // Frontend.md, раздел 4.3.1). Единый визуальный якорь для отсутствующих
-          // фото товара: та же line-иконка категории, что уже используется на
-          // главной/странице категории, вместо голого текста без иконки.
+          // Не через ui/Card (у него фиксированный p-6) — фото идёт в край карточки,
+          // как у плиток категорий (/catalog и главная, Frontend.md, раздел 4.3.1).
           className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-transform duration-200 ease-out motion-safe:hover:scale-[1.02]"
         >
-          {/* aspect-[5/2] на мобильном (было [4/3] на всех ширинах, затем [2/1]) — при
-              карточке во всю ширину экрана иконочная область-плейсхолдер занимала слишком
-              много первого экрана (оценка innovator по скринам телефона: под [2/1] всё
-              ещё ~115px пустоты вокруг иконки h-16). ~143px достаточно под иконку с
-              воздухом. С sm: карточка в 2+ колонки — прежние [4/3]; когда появятся
-              реальные фото товаров, вернуть [4/3] и на мобильном (фото несёт смысл и
-              заслуживает площади). */}
-          <div className="flex aspect-[5/2] w-full items-center justify-center bg-secondary sm:aspect-[4/3]">
-            <CategoryIcon slug={product.category} aria-hidden="true" className="h-16 w-16" />
-          </div>
+          {/* Первое фото товара (Frontend.md, раздел 9) — aspect-[4/3] на всех ширинах:
+              временное [5/2] на мобильном было под иконку-плейсхолдер (раздел 8.9), с
+              реальными фото снято. object-contain + p-4 — фото поставщика разных
+              пропорций вписываются без обрезки. Без фото — подпись, как в ProductGallery. */}
+          {product.images && product.images.length > 0 ? (
+            <div className="relative aspect-[4/3] w-full border-b border-gray-100 bg-white">
+              <Image
+                src={product.images[0]}
+                alt={product.title}
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                className="object-contain p-4"
+              />
+            </div>
+          ) : (
+            <div className="flex aspect-[4/3] w-full items-center justify-center bg-secondary text-secondary">
+              Фото появится позже
+            </div>
+          )}
           <div className="flex flex-1 flex-col gap-3 p-6">
             <Badge
               label={PRODUCT_AVAILABILITY_LABELS[product.availability]}

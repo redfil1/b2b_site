@@ -22,8 +22,8 @@ export default function CategoryLoading() {
               key={index}
               className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
             >
-              {/* Плейсхолдер под блок иконки категории (CategoryIcon, тот же
-                  aspect-[4/3] bg-secondary, что и в реальной карточке ProductGrid.tsx) —
+              {/* Плейсхолдер под фото товара (тот же aspect-[4/3], что и в реальной
+                  карточке ProductGrid.tsx) —
                   без него скелетон был короче настоящей карточки и вызывал скачок
                   вёрстки при подстановке контента (найдено при самокритичном аудите). */}
               <div className="aspect-[4/3] w-full bg-secondary" />
